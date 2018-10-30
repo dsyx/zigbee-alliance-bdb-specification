@@ -25,6 +25,7 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
     - [2.2 IEEE 文档](#22-ieee-文档)
     - [2.3 IETF 文档](#23-ietf-文档)
 - [3. 定义](#3-定义)
+- [4. 缩写](#4-缩写)
 
 # 1. 引言 
 
@@ -198,3 +199,35 @@ ZigBee 终端设备是一个 ZigBee 逻辑设备类型，其只能加入现有�
 
 ZigBee 路由器是一个 ZigBee 逻辑设备类型，其负责管理节点加入。ZigBee 路由器无法启动集中式安全网络，但可以启动分布式安全网络。ZigBee 路由器节点描述符的逻辑类型字段被设置为 0b001。
 
+# 4. 缩写
+
+| 缩写 | 描述 |
+| :-- | :-- |
+| AES | 高级加密标准 |
+| AIB | 应用程序支持子层信息库 |
+| APS | 应用程序支持子层 |
+| APSME | 应用程序支持子层管理实体 |
+| CBKE | 基于证书的密钥交换 |
+| CCITT | 国际电信委员会 |
+| CD | 试车主管 |
+| CRC | 循环冗余校验 |
+| EP | 端点 |
+| EUI | 扩展唯一标识符 |
+| ID | 标识符 |
+| IEEE | 电气和电子工程师协会 |
+| LQI | 链路质量指示 |
+| MAC | 媒体访问控制 |
+| MMO | Matyas-Meyer-Oseas |
+| NLME | 网络层管理实体 |
+| NVRAM | 非易失性随机存取存储器 |
+| NWK | 网络 |
+| OTA | 在空中 |
+| PAN | 个域网 |
+| PHY | 物理 |
+| TC | 信任中心 |
+| WPAN | 无线个域网 |
+| ZC | ZigBee 协调器 |
+| ZCL | ZigBee 簇库 |
+| ZDO | ZigBee 设备对象 |
+| ZED | ZigBee 终端设备 |
+| ZR | ZigBee 路由器 |
