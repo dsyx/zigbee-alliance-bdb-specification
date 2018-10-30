@@ -20,6 +20,10 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
         - [1.4.1 数字格式](#141-数字格式)
     - [1.5 一致性测试](#15-一致性测试)
     - [1.6 勘误表](#16-勘误表)
+- [2. 参考文献](#2-参考文献)
+    - [2.1 ZigBee Alliance 文档](#21-zigbee-alliance-文档)
+    - [2.2 IEEE 文档](#22-ieee-文档)
+    - [2.3 IETF 文档](#23-ietf-文档)
 
 # 1. 引言 
 
@@ -61,4 +65,31 @@ When a bit is specified as having a value of either 0 or 1 it is specified with 
 ## 1.6 勘误表
 
 任何针对此规范的勘误都可以在 \[R7\] 中找到。
+
+# 2. 参考文献
+
+## 2.1 ZigBee Alliance 文档
+
+\[R1\] ZigBee Specification, ZigBee Alliance document 05-3474.
+
+\[R2\] ZigBee Cluster Library Specification, ZigBee Alliance document 07-5123.
+
+\[R3\] ZigBee Application Architecture, ZigBee Alliance document 13-0589.
+
+\[R4\] ZigBee Profile Interoperability Technical Requirements Document, ZigBee document 13-0142-09.
+
+\[R5\] Installation Code Key Derivation Sample Code, ZigBee document 09-5343-04.
+
+\[R6\] Base Device Behavior Test Specification, ZigBee document 14-0439.
+
+\[R7\] Z3 Errata for Base Device Behavior 13-0402, ZigBee document 15-02020.
+
+## 2.2 IEEE 文档
+
+\[R8\] Institute of Electrical and Electronics Engineers, Inc., IEEE Std. 802.15.4-2003, IEEE Standard for Information Technology —Telecommunications and Information Exchange between Systems —Local and Metropolitan Area Networks —Specific Requirements —Part 15.4: Wireless Medium Access Control (MAC) and Physical Layer (PHY) Specifications for Low Rate Wireless Personal Area Networks (WPANs). New York: IEEE Press. 2003.
+
+## 2.3 IETF 文档
+
+\[R9\] S. Bradner, Key words for use in RFCs to Indicate Requirement Levels, IETF RFC 2119, March 1997.
+
 
