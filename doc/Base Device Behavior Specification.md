@@ -26,6 +26,37 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
     - [2.3 IETF 文档](#23-ietf-文档)
 - [3. 定义](#3-定义)
 - [4. 缩写](#4-缩写)
+- [5. 环境变量](#5-环境变量)
+    - [5.1 所有节点使用的常量](#51-所有节点使用的常量)
+        - [5.1.1 bdbcMaxSameNetworkRetryAttempts 常量](#511-bdbcmaxsamenetworkretryattempts-常量)
+        - [5.1.2 bdbcMinCommissioningTime 常量](#512-bdbcmincommissioningtime-常量)
+        - [5.1.3 bdbcRecSameNetworkRetryAttempts 常量](#513-bdbcrecsamenetworkretryattempts-常量)
+        - [5.1.4 bdbcTCLinkKeyExchangeTimeout 常量](#514-bdbctclinkkeyexchangetimeout-常量)
+    - [5.2 支持 touchlink 的节点使用的常量](#52-支持-touchlink-的节点使用的常量)
+        - [5.2.1 bdbcTLInterPANTransIdLifetime 常量](#521-bdbctlinterpantransidlifetime-常量)
+        - [5.2.2 bdbcTLMinStartupDelayTime 常量](#522-bdbctlminstartupdelaytime-常量)
+        - [5.2.3 bdbcTLPrimaryChannelSet 常量](#523-bdbctlprimarychannelset-常量)
+        - [5.2.4 bdbcTLRxWindowDuration 常量](#524-bdbctlrxwindowduration-常量)
+        - [5.2.5 bdbcTLScanTimeBaseDuration 常量](#525-bdbctlscantimebaseduration-常量)
+        - [5.2.6 bdbcTLSecondaryChannelSet 常量](#526-bdbctlsecondarychannelset-常量)
+    - [5.3 属性](#53-属性)
+        - [5.3.1 bdbCommissioningGroupID 属性](#531-bdbcommissioninggroupid-属性)
+        - [5.3.2 bdbCommissioningMode 属性](#532-bdbcommissioningmode-属性)
+        - [5.3.3 bdbCommissioningStatus 属性](#533-bdbcommissioningstatus-属性)
+        - [5.3.4 bdbJoiningNodeEui64 属性](#534-bdbjoiningnodeeui64-属性)
+        - [5.3.5 bdbJoiningNodeNewTCLinkKey 属性](#535-bdbjoiningnodenewtclinkkey-属性)
+        - [5.3.6 bdbJoinUsesInstallCodeKey 属性](#536-bdbjoinusesinstallcodekey-属性)
+        - [5.3.7 bdbNodeCommissioningCapability 属性](#537-bdbnodecommissioningcapability-属性)
+        - [5.3.8 bdbNodeIsOnANetwork 属性](#538-bdbnodeisonanetwork-属性)
+        - [5.3.9 bdbNodeJoinLinkKeyType 属性](#539-bdbnodejoinlinkkeytype-属性)
+        - [5.3.10 bdbPrimaryChannelSet 属性](#5310-bdbprimarychannelset-属性)
+        - [5.3.11 bdbScanDuration 属性](#5311-bdbscanduration-属性)
+        - [5.3.12 bdbSecondaryChannelSet 属性](#5312-bdbsecondarychannelset-属性)
+        - [5.3.13 bdbTCLinkKeyExchangeAttempts 属性](#5313-bdbtclinkkeyexchangeattempts-属性)
+        - [5.3.14 bdbTCLinkKeyExchangeAttemptsMax 属性](#5314-bdbtclinkkeyexchangeattemptsmax-属性)
+        - [5.3.15 bdbTCLinkKeyExchangeMethod 属性](#5315-bdbtclinkkeyexchangemethod-属性)
+        - [5.3.16 bdbTrustCenterNodeJoinTimeout 属性](#5316-bdbtrustcenternodejointimeout-属性)
+        - [5.3.17 bdbTrustCenterRequireKeyExchange 属性](#5317-bdbtrustcenterrequirekeyexchange-属性)
 
 # 1. 引言 
 
@@ -38,7 +69,7 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
 * 基础设备的重置（reset）过程
 * 基础设备的安全（security）过程
 
-> Note：本文档旨在涵盖与基础设备行为相关的阶段 1 的配置文件互操作性技术要求。另见 \[R4\]。
+注意：本文档旨在涵盖与基础设备行为相关的阶段 1 的配置文件互操作性技术要求。另见 \[R4\]。
 
 ## 1.2 目的
 
@@ -231,3 +262,213 @@ ZigBee 路由器是一个 ZigBee 逻辑设备类型，其负责管理节点加�
 | ZDO | ZigBee 设备对象 |
 | ZED | ZigBee 终端设备 |
 | ZR | ZigBee 路由器 |
+
+# 5. 环境变量
+
+此子条款指定实现符合基础设备行为规范的节点所需的常量和属性。
+
+本规范中指定的所有常量都使用前缀 “bdbc”（基础设备行为常量），并且所有属性都使用前缀 “bdb”（基础设备行为）。
+
+## 5.1 所有节点使用的常量
+
+Table 1 列出了被所有设备使用的基础设备行为规范定义的常量集。
+
+![Table 1 – Constants used by all nodes](../pic/Base%20Device%20Behavior%20Specification/t1.jpg)
+
+### 5.1.1 bdbcMaxSameNetworkRetryAttempts 常量
+
+**bdbcMaxSameNetworkRetryAttempts** 常量指定了对同一网络进行的加入或密钥交换的最大尝试次数。
+
+该常量被每个节点使用。
+
+另请参见 **bdbcRecSameNetworkRetryAttempts**。
+
+### 5.1.2 bdbcMinCommissioningTime 常量
+
+**bdbcMinCommissioningTime** 常量指定了打开网络以允许新节点加入或设备标识自身的最小持续时间（秒）。
+
+该常量被每个节点使用。
+
+### 5.1.3 bdbcRecSameNetworkRetryAttempts 常量
+
+**bdbcRecSameNetworkRetryAttempts** 常量指定了对同一网络进行的加入或密钥交换的（RECOMMENDED）最大尝试次数。
+
+该常量被每个节点使用。
+
+另请参见 **bdbcMaxSameNetworkRetryAttempts**。
+
+### 5.1.4 bdbcTCLinkKeyExchangeTimeout 常量
+
+**bdbcTCLinkKeyExchangeTimeout** 常量指定了加入节点在向信任中心发送 APS 请求密钥时等待响应的最长时间（秒）。
+
+该常量被每个节点使用。
+
+## 5.2 支持 touchlink 的节点使用的常量
+
+Table 2 列出了被支持 touchlink 试车的设备使用的基础设备行为规范定义的常量集。
+
+![Table 2 – Constants used by nodes supporting touchlink](../pic/Base%20Device%20Behavior%20Specification/t2.jpg)
+
+### 5.2.1 bdbcTLInterPANTransIdLifetime 常量
+
+**bdbcTLInterPANTransIdLifetime** 常量指定了 inter-PAN 事务 ID 保持有效的最大时间长度。
+
+如果支持 touchlink，则节点将使用此常量。
+
+### 5.2.2 bdbcTLMinStartupDelayTime 常量
+
+**bdbcTLMinStartupDelayTime** 常量指定了发起者等待以确保目标已完成其网络启动过程的时间长度。
+
+如果支持 touchlink，则节点将使用此常量。
+
+### 5.2.3 bdbcTLPrimaryChannelSet 常量
+
+**bdbcTLPrimaryChannelSet** 常量指定了由信道 11、15、20 和 25 组成的信道集的位掩码，其将用于非扩展的 touchlink 扫描。
+
+如果支持 touchlink，则节点将使用此常量。
+
+### 5.2.4 bdbcTLRxWindowDuration 常量
+
+**bdbcTLRxWindowDuration** 常量指定了节点在 touchlink 期间为后续响应启用接收器的最大持续时间。
+
+如果支持 touchlink，则节点将使用此常量。
+
+### 5.2.5 bdbcTLScanTimeBaseDuration 常量
+
+**bdbcTLScanTimeBaseDuration** 常量指定了 touchlink 扫描操作的基本持续时间，在此期间接收器在发送扫描请求后被启用以扫描响应。
+
+如果支持 touchlink，则节点将使用此常量。
+
+### 5.2.6 bdbcTLSecondaryChannelSet 常量
+
+**bdbcTLSecondaryChannelSet** 常量指定了信道集的位掩码，该信道集由在 2.4GHz 中可用的剩余 IEEE 802.15.4-2003 信道组成，这些信道将在扫描 **bdbcTLPrimaryChannelSet** 信道后用于扩展的 touchlink 扫描。
+
+如果支持 touchlink，则节点将使用此常量。
+
+## 5.3 属性
+
+基础设备行为规范定义了 Table 3 中列出的属性集。“Used by” 列指示属性被用于哪个 ZigBee 逻辑设备类型以及是否要为每个端点定义该属性。注意：本规范中定义的所有属性都是节点内部的，在空中不可用。
+
+![Table 3 – Attributes used in the base device behavior](../pic/Base%20Device%20Behavior%20Specification/t3.jpg)
+
+### 5.3.1 bdbCommissioningGroupID 属性
+
+**bdbCommissioningGroupID** 属性指定了发起者应用在查找和绑定上的分组标识符。如果 **bdbCommissioningGroupID** 等于 0xffff，则任何绑定都将创建为单播。
+
+如果 **bdbCommissioningMode** 属性（参见子条款 5.3.2）的第 3 位等于 1（将尝试查找和绑定），则此属性仅在试车期间被使用。
+
+此属性被发起者节点使用，其要为每个端点定义。
+
+注意：睡着的 ZigBee 终端设备目标将无法从组播传输中获益（有关详细信息，请参阅 \[R2\] 中的分组簇）。
+
+### 5.3.2 bdbCommissioningMode 属性
+
+**bdbCommissioningMode** 属性用作最高级别试车过程的参数，并在试车被调用时指定所采用的试车方法和选项，由从最低有效位到最高有效位的每个位表示。
+
+请注意，此属性与 **bdbNodeCommissioningCapability** 属性不同，后者指定节点支持哪些试车机制。该属性是一个位元或 Table 4 中列出的位。
+
+此属性被所有节点使用，其要为每个端点定义。
+
+![Table 4 – Bits of the bdbCommissioningMode attribute](../pic/Base%20Device%20Behavior%20Specification/t4.jpg)
+
+### 5.3.3 bdbCommissioningStatus 属性
+
+**bdbCommissioningStatus** 属性指定了其试车尝试的状态，可以被设置为 Table 5 中列出的值之一。
+
+此属性被所有节点使用，其要为每个端点定义。
+
+![Table 5 – Values of the bdbCommissioningStatus attribute](../pic/Base%20Device%20Behavior%20Specification/t5.jpg)
+
+### 5.3.4 bdbJoiningNodeEui64 属性
+
+**bdbJoiningNodeEui64** 属性包含加入集中式安全网络的节点的 EUI-64。
+
+此属性被 ZigBee 协调器节点使用。
+
+### 5.3.5 bdbJoiningNodeNewTCLinkKey 属性
+
+**bdbJoiningNodeNewTCLinkKey** 属性包含与加入节点建立但尚未确认的新链路密钥。
+
+此属性被 ZigBee 协调器节点使用。
+
+### 5.3.6 bdbJoinUsesInstallCodeKey 属性
+
+**bdbJoinUsesInstallCodeKey** 属性指定了信任中心的策略，该策略指示其在相应节点加入其网络之前是否需要预安装一个安装码派生的预配置链路密钥。
+
+如果 **bdbJoinUsesInstallCodeKey** 等于 FALSE，则信任中心允许节点加入其网络，而无需在节点加入之前预安装与节点关联的相应安装码派生的预配置链路密钥。如果 **bdbJoinUsesInstallCodeKey** 等于 TRUE，则必须在节点加入之前已预安装与该节点关联的相应安装码派生的预配置链路密钥，信任中心才允许节点加入其网络。
+
+此属性被 ZigBee 协调器节点使用。
+
+### 5.3.7 bdbNodeCommissioningCapability 属性
+
+**bdbNodeCommissioningCapability** 属性指定了节点的试车能力。该属性是一个位元或 Table 6 中列出的位。
+
+此属性被所有节点使用。
+
+![Table 6 – Bits of the bdbNodeCommissioningCapability attribute](../pic/Base%20Device%20Behavior%20Specification/t6.jpg)
+
+### 5.3.8 bdbNodeIsOnANetwork 属性
+
+**bdbNodeIsOnANetwork** 属性指示了节点是否已加入网络。如果 **bdbNodeIsOnANetwork** 等于 FALSE，则该节点尚未形成或加入网络。如果 **bdbNodeIsOnANetwork** 等于 TRUE，则节点形成了集中式安全网络（如果节点是 ZigBee 协调器）或形成了分布式安全网络（如果节点是 ZigBee 路由器）或已加入网络（如果节点是 ZigBee 路由器或 ZigBee 终端设备）。请注意，当 **bdbNodeIsOnANetwork** 等于 TRUE 时，节点可能还没有任何绑定端点。
+
+此属性被所有节点使用。
+
+### 5.3.9 bdbNodeJoinLinkKeyType 属性
+
+**bdbNodeJoinLinkKeyType** 属性指示了链路密钥的类型（请参阅子条款 6.3），当节点加入新网络时，该节点能够使用其解密网络密钥。此属性可以采用 Table 7 中列出的值之一。
+
+![Table 7 – Values of the bdbNodeJoinLinkKeyType attribute](../pic/Base%20Device%20Behavior%20Specification/t7.jpg)
+
+此属性被 ZigBee 路由器和 ZigBee 终端设备使用。
+
+### 5.3.10 bdbPrimaryChannelSet 属性
+
+**bdbPrimaryChannelSet** 属性指定了由应用程序定义的将优先使用的信道集，例如，在信道扫描期间。请注意，如果不需要主要扫描，则此属性被设置为 0x00000000。但是，在这种情况下，**bdbSecondaryChannelSet** 不应被设置为 0x00000000。
+
+此属性被所有节点使用。
+
+### 5.3.11 bdbScanDuration 属性
+
+**bdbScanDuration** 属性指定了每个信道的 IEEE 802.15.4 扫描操作的持续时间。扫描每个信道所花费的时间通过 \[aBaseSuperframeDuration *(2n + 1)\] 给出，其中 n 是 **bdbScanDuration** 的值，**aBaseSuperframeDuration** 在 \[R8\] 的子条款 7.4.1（Table 70）中定义。
+
+The scan is performed indirectly via the ZigBee primitives and can be energy, passive or active.
+
+此属性被所有节点使用。
+
+### 5.3.12 bdbSecondaryChannelSet 属性
+
+**bdbSecondaryChannelSet** 属性指定了由应用程序定义的信道集，该信道集将在主要信道之后使用，例如，在信道扫描期间。请注意，如果不需要次要扫描，则此属性被设置为 0x00000000。但是，在这种情况下，**bdbPrimaryChannelSet** 不应被设置为 0x00000000。
+
+此属性被所有节点使用。
+
+### 5.3.13 bdbTCLinkKeyExchangeAttempts 属性
+
+**bdbTCLinkKeyExchangeAttempts** 属性包含了在加入后建立新链路密钥的密钥建立尝试次数。
+
+此属性被 ZigBee 路由器和 ZigBee 终端设备使用。
+
+### 5.3.14 bdbTCLinkKeyExchangeAttemptsMax 属性
+
+**bdbTCLinkKeyExchangeAttemptsMax** 属性指定了在放弃密钥建立之前将进行的最大密钥建立尝试次数。
+
+此属性被 ZigBee 路由器和 ZigBee 终端设备使用。
+
+### 5.3.15 bdbTCLinkKeyExchangeMethod 属性
+
+**bdbTCLinkKeyExchangeMethod** 属性指定了在加入网络后用于建立新链路密钥的方法，并且可以设置为 Table 8 中列出的非保留值之一。
+
+此属性被 ZigBee 路由器和 ZigBee 终端设备使用。
+
+![Table 8 – Values of the bdbTCLinkKeyExchangeMethod attribute](../pic/Base%20Device%20Behavior%20Specification/t8.jpg)
+
+### 5.3.16 bdbTrustCenterNodeJoinTimeout 属性
+
+**bdbTrustCenterNodeJoinTimeout** 属性为信任中心指定了一个超时（秒），以移除未成功建立新链路密钥的新加入节点的信任中心链路密钥。
+
+此属性被 ZigBee 协调器节点使用。
+
+### 5.3.17 bdbTrustCenterRequireKeyExchange 属性
+
+**bdbTrustCenterRequireKeyExchange** 属性指定了信任中心是否要求加入设备将其初始链路密钥与信任中心生成的新链路密钥进行交换。如果 **bdbTrustCenterRequireKeyExchange** 等于 TRUE，则加入节点必须经历链路密钥交换过程；无法交换链路密钥将导致节点从网络中移除。如果 **bdbTrustCenterRequireKeyExchange** 等于 FALSE，则信任中心将允许加入节点保留在网络上而不交换其初始链路密钥。
+
+此属性被 ZigBee 协调器节点使用。
