@@ -1,6 +1,6 @@
 # **Base Device Behavior Specification Version 1.0** <!-- omit in toc -->
 
-![tmp1.jpg](../pic/Base%20Device%20Behavior%20Specification/tmp1.jpg)
+![tmp1.jpg](./pic/tmp1.jpg)
 
 # **Notice of use and disclosure** <!-- omit in toc -->
 
@@ -8,7 +8,7 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
 
 # **Revision history** <!-- omit in toc -->
 
-![tmp2.jpg](../pic/Base%20Device%20Behavior%20Specification/tmp2.jpg)
+![tmp2.jpg](./pic/tmp2.jpg)
 
 # **Table of Contents** <!-- omit in toc -->
 
@@ -273,7 +273,7 @@ ZigBee 路由器是一个 ZigBee 逻辑设备类型，其负责管理节点加�
 
 Table 1 列出了被所有设备使用的基础设备行为规范定义的常量集。
 
-![Table 1 – Constants used by all nodes](../pic/Base%20Device%20Behavior%20Specification/t1.jpg)
+![Table 1 – Constants used by all nodes](./pic/t1.jpg)
 
 ### 5.1.1 bdbcMaxSameNetworkRetryAttempts 常量
 
@@ -307,7 +307,7 @@ Table 1 列出了被所有设备使用的基础设备行为规范定义的常量
 
 Table 2 列出了被支持 touchlink 试车的设备使用的基础设备行为规范定义的常量集。
 
-![Table 2 – Constants used by nodes supporting touchlink](../pic/Base%20Device%20Behavior%20Specification/t2.jpg)
+![Table 2 – Constants used by nodes supporting touchlink](./pic/t2.jpg)
 
 ### 5.2.1 bdbcTLInterPANTransIdLifetime 常量
 
@@ -349,7 +349,7 @@ Table 2 列出了被支持 touchlink 试车的设备使用的基础设备行为�
 
 基础设备行为规范定义了 Table 3 中列出的属性集。“Used by” 列指示属性被用于哪个 ZigBee 逻辑设备类型以及是否要为每个端点定义该属性。注意：本规范中定义的所有属性都是节点内部的，在空中不可用。
 
-![Table 3 – Attributes used in the base device behavior](../pic/Base%20Device%20Behavior%20Specification/t3.jpg)
+![Table 3 – Attributes used in the base device behavior](./pic/t3.jpg)
 
 ### 5.3.1 bdbCommissioningGroupID 属性
 
@@ -369,7 +369,7 @@ Table 2 列出了被支持 touchlink 试车的设备使用的基础设备行为�
 
 此属性被所有节点使用，其要为每个端点定义。
 
-![Table 4 – Bits of the bdbCommissioningMode attribute](../pic/Base%20Device%20Behavior%20Specification/t4.jpg)
+![Table 4 – Bits of the bdbCommissioningMode attribute](./pic/t4.jpg)
 
 ### 5.3.3 bdbCommissioningStatus 属性
 
@@ -377,7 +377,7 @@ Table 2 列出了被支持 touchlink 试车的设备使用的基础设备行为�
 
 此属性被所有节点使用，其要为每个端点定义。
 
-![Table 5 – Values of the bdbCommissioningStatus attribute](../pic/Base%20Device%20Behavior%20Specification/t5.jpg)
+![Table 5 – Values of the bdbCommissioningStatus attribute](./pic/t5.jpg)
 
 ### 5.3.4 bdbJoiningNodeEui64 属性
 
@@ -405,7 +405,7 @@ Table 2 列出了被支持 touchlink 试车的设备使用的基础设备行为�
 
 此属性被所有节点使用。
 
-![Table 6 – Bits of the bdbNodeCommissioningCapability attribute](../pic/Base%20Device%20Behavior%20Specification/t6.jpg)
+![Table 6 – Bits of the bdbNodeCommissioningCapability attribute](./pic/t6.jpg)
 
 ### 5.3.8 bdbNodeIsOnANetwork 属性
 
@@ -417,7 +417,7 @@ Table 2 列出了被支持 touchlink 试车的设备使用的基础设备行为�
 
 **bdbNodeJoinLinkKeyType** 属性指示了链路密钥的类型（请参阅子条款 6.3），当节点加入新网络时，该节点能够使用其解密网络密钥。此属性可以采用 Table 7 中列出的值之一。
 
-![Table 7 – Values of the bdbNodeJoinLinkKeyType attribute](../pic/Base%20Device%20Behavior%20Specification/t7.jpg)
+![Table 7 – Values of the bdbNodeJoinLinkKeyType attribute](./pic/t7.jpg)
 
 此属性被 ZigBee 路由器和 ZigBee 终端设备使用。
 
@@ -459,7 +459,7 @@ The scan is performed indirectly via the ZigBee primitives and can be energy, pa
 
 此属性被 ZigBee 路由器和 ZigBee 终端设备使用。
 
-![Table 8 – Values of the bdbTCLinkKeyExchangeMethod attribute](../pic/Base%20Device%20Behavior%20Specification/t8.jpg)
+![Table 8 – Values of the bdbTCLinkKeyExchangeMethod attribute](./pic/t8.jpg)
 
 ### 5.3.16 bdbTrustCenterNodeJoinTimeout 属性
 
