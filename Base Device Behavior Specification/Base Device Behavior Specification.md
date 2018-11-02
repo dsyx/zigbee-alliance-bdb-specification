@@ -71,6 +71,8 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
     - [6.7 默认报告配置](#67-默认报告配置)
     - [6.8 MAC 数据轮询](#68-mac-数据轮询)
     - [6.9 ZigBee 持久数据](#69-zigbee-持久数据)
+- [7. 初始化](#7-初始化)
+    - [7.1 初始化过程](#71-初始化过程)
 
 # 1. 引言 
 
@@ -637,4 +639,23 @@ ZigBee 规范仅要求父节点缓冲单个消息 7.5 秒。该单个缓冲区�
 除了 ZigBee 规范（参见 \[R1\]）和 ZCL 规范（参见 \[R2\]）中指定的持久数据外，节点还应（SHALL）在重置间保留以下数据：
 
 * bdbNodeIsOnANetwork 属性
+
+# 7. 初始化
+
+当节点在第一次上电或在后续以某种形式 断电/重启 上电后，节点将会执行初始化。ZigBee 规范（参见 \[R1\]）和子条款 6.9 中定义了节点在重置间预期保存的数据，其首先恢复该数据以确定如何初始化节点。如果节点是路由器，则建议（RECOMMENDED）首先尝试发现其网络是否仍然存在，或已移至另一个信道并采取相应的纠正措施。
+
+## 7.1 初始化过程
+
+本节定义了节点的初始化过程。Figure 1 展示了此过程的简化版本，以供快速参考。
+
+![Figure 1 – Initialization procedure](./pic/f1.jpg)
+
+1. 节点应（SHALL）恢复其持久的 ZigBee 数据，如子条款 6.9 中所述。
+2. 如果 **bdbNodeIsOnANetwork** 等于 FALSE，则节点应（SHALL）从 step 6 继续。
+3. 如果节点的节点描述符的逻辑类型字段不等于 0b010（ZigBee 终端设备），则它应（SHALL）从 step 8 继续。
+4. 节点应（SHALL）尝试重新加入网络。为此，节点发出 **NLME-JOIN.request** 原语，其中 **ExtendedPANId** 参数设置为已知网络的扩展 PAN 标识符，**RejoinNetwork** 参数设置为 0x02，**ScanChannels** 参数设置为 0x00000000，**ScanDuration** 参数设置为 0x00，**CapabilityInformation** 为适合节点的设置，**SecurityEnable** 参数设置为 TRUE。在从 NWK 层接收到 **NLME-JOIN.confirm** 原语时，使用 NWK 重新加入以通知节点所请求加入网络的状态。
+5. 如果 **NLME-JOIN.confirm** 原语的 **Status** 参数等于 SUCCESS，则节点应（SHALL）广播 **Device_annce** ZDO 命令并从 step 8 继续。如果 **NLME-JOIN.confirm** 原语的 **Status** 参数不等于 SUCCESS，则节点可以（MAY）在某个应用程序特定的时间重试该过程，或者从 step 8 继续。实现的责任是处理后续的重新加入尝试。
+6. 如果节点的节点描述符的逻辑类型字段不等于 0b001（ZigBee 路由器），则它应（SHALL）从 step 8 继续。
+7. 如果 **bdbNodeCommissioningCapability** 的第 3 位等于 1（即支持 touchlink），则节点应（SHALL）将其逻辑信道设置为 **bdbcTLPrimaryChannelSet** 中指定的信道之一。
+8. 然后节点应（SHALL）终止该初始化过程。
 
