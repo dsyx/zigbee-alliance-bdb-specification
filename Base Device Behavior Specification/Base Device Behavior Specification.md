@@ -73,6 +73,11 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
     - [6.9 ZigBee 持久数据](#69-zigbee-持久数据)
 - [7. 初始化](#7-初始化)
     - [7.1 初始化过程](#71-初始化过程)
+- [8. Commissioning](#8-commissioning)
+    - [8.1 顶级 commissioning 过程](#81-顶级-commissioning-过程)
+    - [8.2 已在网节点的网络转向过程](#82-已在网节点的网络转向过程)
+    - [8.3 非在网节点的网络转向过程](#83-非在网节点的网络转向过程)
+    - [8.4 网络形成过程](#84-网络形成过程)
 
 # 1. 引言 
 
@@ -187,7 +192,7 @@ When a bit is specified as having a value of either 0 or 1 it is specified with 
 
 **EZ-Mode：**
 
-EZ-Mode 是一种 commissioning 方法，用于定义节点上的网络转向和设备重置，以及查找和绑定具有目标或发起者簇的端点。该方法要求产品支持交互机制以调用该方法。产品的安装者可以访问这些机制。这些机制是依赖于实现的，并且可以是过载 和/或 自动的。
+EZ-Mode 是一种 commissioning 方法，用于定义节点上的网络转向和设备重置，以及查找和绑定具有目标或发起者簇的端点。该方法要求产品支持交互机制以调用该方法。产品的安装者可以访问这些机制。这些机制是依赖于实现的，并且可以是重载的 和/或 自动的。
 
 在设备端点上调用 EZ-Mode 会使节点和设备置于 EZ-Mode 下保持 3 分钟的窗口。每次在设备上调用 EZ-Mode 时，它会将窗口再延长 3 分钟。在窗口期间，节点执行 EZ-Mode 网络转向，并且在 EZ-Mode 中设备执行 EZ-Mode 查找和绑定到其他设备。目标设备使用标识（identify）簇在窗口期间进行标识。发起者设备在窗口期间主动发现目标，然后绑定到相应的目标簇。
 
@@ -237,15 +242,15 @@ Touchlink commissioning 是一种可选的 commissioning 机制，其在物理�
 
 **ZigBee 协调器（ZigBee coordinator）：**
 
-ZigBee 协调器是一个 ZigBee 逻辑设备类型，其包括信任中心的功能，负责启动集中式安全网络并管理网络的节点加入和密钥分发。ZigBee 协调器节点描述符的逻辑类型字段被设置为 0b000。
+ZigBee 协调器是一个 ZigBee 逻辑设备类型，其包括信任中心的功能，负责启动集中式安全网络并管理网络的节点加入和密钥分发。ZigBee 协调器节点描述符的逻辑类型字段被设置为 **0b000**。
 
 **ZigBee 终端设备（ZigBee end device）：**
 
-ZigBee 终端设备是一个 ZigBee 逻辑设备类型，其只能加入现有网络。ZigBee 终端设备节点描述符的逻辑类型字段被设置为 0b010。
+ZigBee 终端设备是一个 ZigBee 逻辑设备类型，其只能加入现有网络。ZigBee 终端设备节点描述符的逻辑类型字段被设置为 **0b010**。
 
 **ZigBee 路由器（ZigBee router）：**
 
-ZigBee 路由器是一个 ZigBee 逻辑设备类型，其负责管理节点加入。ZigBee 路由器无法启动集中式安全网络，但可以启动分布式安全网络。ZigBee 路由器节点描述符的逻辑类型字段被设置为 0b001。
+ZigBee 路由器是一个 ZigBee 逻辑设备类型，其负责管理节点加入。ZigBee 路由器无法启动集中式安全网络，但可以启动分布式安全网络。ZigBee 路由器节点描述符的逻辑类型字段被设置为 **0b001**。
 
 # 4. 缩写
 
@@ -370,9 +375,9 @@ Table 2 列出了被支持 touchlink commissioning 的设备使用的基础设�
 
 ### 5.3.1 bdbCommissioningGroupID 属性
 
-**bdbCommissioningGroupID** 属性指定了发起者应用在查找和绑定上的分组标识符。如果 **bdbCommissioningGroupID** 等于 0xffff，则任何绑定都将创建为单播。
+**bdbCommissioningGroupID** 属性指定了发起者应用在查找和绑定上的分组标识符。如果 **bdbCommissioningGroupID** 等于 **0xffff**，则任何绑定都将创建为单播。
 
-如果 **bdbCommissioningMode** 属性（参见子条款 5.3.2）的第 3 位等于 1（将尝试查找和绑定），则此属性仅在 commissioning 期间被使用。
+如果 **bdbCommissioningMode** 属性（参见子条款 5.3.2）的第 3 位等于 **1**（将尝试查找和绑定），则此属性仅在 commissioning 期间被使用。
 
 此属性被发起者节点使用，其要为每个端点定义。
 
@@ -380,7 +385,7 @@ Table 2 列出了被支持 touchlink commissioning 的设备使用的基础设�
 
 ### 5.3.2 bdbCommissioningMode 属性
 
-**bdbCommissioningMode** 属性用作最高级别 commissioning 过程的参数，并在 commissioning 被调用时指定所采用的 commissioning 方法和选项，由从最低有效位到最高有效位的每个位表示。
+**bdbCommissioningMode** 属性用作顶级 commissioning 过程的参数，并在 commissioning 被调用时指定所采用的 commissioning 方法和选项，由从最低有效位到最高有效位的每个位表示。
 
 请注意，此属性与 **bdbNodeCommissioningCapability** 属性不同，后者指定节点支持哪些 commissioning 机制。该属性是一个位元或 Table 4 中列出的位。
 
@@ -412,7 +417,7 @@ Table 2 列出了被支持 touchlink commissioning 的设备使用的基础设�
 
 **bdbJoinUsesInstallCodeKey** 属性指定了信任中心的策略，该策略指示其在相应节点加入其网络之前是否需要预安装一个安装码派生的预配置链路密钥。
 
-如果 **bdbJoinUsesInstallCodeKey** 等于 FALSE，则信任中心允许节点加入其网络，而无需在节点加入之前预安装与节点关联的相应安装码派生的预配置链路密钥。如果 **bdbJoinUsesInstallCodeKey** 等于 TRUE，则必须在节点加入之前已预安装与该节点关联的相应安装码派生的预配置链路密钥，信任中心才允许节点加入其网络。
+如果 **bdbJoinUsesInstallCodeKey** 等于 **FALSE**，则信任中心允许节点加入其网络，而无需在节点加入之前预安装与节点关联的相应安装码派生的预配置链路密钥。如果 **bdbJoinUsesInstallCodeKey** 等于 **TRUE**，则必须在节点加入之前已预安装与该节点关联的相应安装码派生的预配置链路密钥，信任中心才允许节点加入其网络。
 
 此属性被 ZigBee 协调器节点使用。
 
@@ -426,7 +431,7 @@ Table 2 列出了被支持 touchlink commissioning 的设备使用的基础设�
 
 ### 5.3.8 bdbNodeIsOnANetwork 属性
 
-**bdbNodeIsOnANetwork** 属性指示了节点是否已加入网络。如果 **bdbNodeIsOnANetwork** 等于 FALSE，则该节点尚未形成或加入网络。如果 **bdbNodeIsOnANetwork** 等于 TRUE，则节点形成了集中式安全网络（如果节点是 ZigBee 协调器）或形成了分布式安全网络（如果节点是 ZigBee 路由器）或已加入网络（如果节点是 ZigBee 路由器或 ZigBee 终端设备）。请注意，当 **bdbNodeIsOnANetwork** 等于 TRUE 时，节点可能还没有任何绑定端点。
+**bdbNodeIsOnANetwork** 属性指示了节点是否已加入网络。如果 **bdbNodeIsOnANetwork** 等于 **FALSE**，则该节点尚未形成或加入网络。如果 **bdbNodeIsOnANetwork** 等于 **TRUE**，则节点形成了集中式安全网络（如果节点是 ZigBee 协调器）或形成了分布式安全网络（如果节点是 ZigBee 路由器）或已加入网络（如果节点是 ZigBee 路由器或 ZigBee 终端设备）。注意，当 **bdbNodeIsOnANetwork** 等于 **TRUE** 时，节点可能还没有任何绑定端点。
 
 此属性被所有节点使用。
 
@@ -440,13 +445,13 @@ Table 2 列出了被支持 touchlink commissioning 的设备使用的基础设�
 
 ### 5.3.10 bdbPrimaryChannelSet 属性
 
-**bdbPrimaryChannelSet** 属性指定了由应用程序定义的将优先使用的信道集，例如，在信道扫描期间。请注意，如果不需要主要扫描，则此属性被设置为 0x00000000。但是，在这种情况下，**bdbSecondaryChannelSet** 不应被设置为 0x00000000。
+**bdbPrimaryChannelSet** 属性指定了由应用程序定义的将优先使用的信道集，例如，在信道扫描期间。请注意，如果不需要主要扫描，则此属性被设置为 **0x00000000**。但是，在这种情况下，**bdbSecondaryChannelSet** 不应被设置为 **0x00000000**。
 
 此属性被所有节点使用。
 
 ### 5.3.11 bdbScanDuration 属性
 
-**bdbScanDuration** 属性指定了每个信道的 IEEE 802.15.4 扫描操作的持续时间。扫描每个信道所花费的时间通过 \[aBaseSuperframeDuration *(2n + 1)\] 给出，其中 n 是 **bdbScanDuration** 的值，**aBaseSuperframeDuration** 在 \[R8\] 的子条款 7.4.1（Table 70）中定义。
+**bdbScanDuration** 属性指定了每个信道的 IEEE 802.15.4 扫描操作的持续时间。扫描每个信道所花费的时间通过 \[aBaseSuperframeDuration *(2n + 1)\] 给出，其中 **n** 是 **bdbScanDuration** 的值，**aBaseSuperframeDuration** 在 \[R8\] 的子条款 7.4.1（Table 70）中定义。
 
 The scan is performed indirectly via the ZigBee primitives and can be energy, passive or active.
 
@@ -454,7 +459,7 @@ The scan is performed indirectly via the ZigBee primitives and can be energy, pa
 
 ### 5.3.12 bdbSecondaryChannelSet 属性
 
-**bdbSecondaryChannelSet** 属性指定了由应用程序定义的信道集，该信道集将在主要信道之后使用，例如，在信道扫描期间。请注意，如果不需要次要扫描，则此属性被设置为 0x00000000。但是，在这种情况下，**bdbPrimaryChannelSet** 不应被设置为 0x00000000。
+**bdbSecondaryChannelSet** 属性指定了由应用程序定义的信道集，该信道集将在主要信道之后使用，例如，在信道扫描期间。请注意，如果不需要次要扫描，则此属性被设置为 **0x00000000**。但是，在这种情况下，**bdbPrimaryChannelSet** 不应被设置为 **0x00000000**。
 
 此属性被所有节点使用。
 
@@ -486,7 +491,7 @@ The scan is performed indirectly via the ZigBee primitives and can be energy, pa
 
 ### 5.3.17 bdbTrustCenterRequireKeyExchange 属性
 
-**bdbTrustCenterRequireKeyExchange** 属性指定了信任中心是否要求加入设备将其初始链路密钥与信任中心生成的新链路密钥进行交换。如果 **bdbTrustCenterRequireKeyExchange** 等于 TRUE，则加入节点必须经历链路密钥交换过程；无法交换链路密钥将导致节点从网络中移除。如果 **bdbTrustCenterRequireKeyExchange** 等于 FALSE，则信任中心将允许加入节点保留在网络上而不交换其初始链路密钥。
+**bdbTrustCenterRequireKeyExchange** 属性指定了信任中心是否要求加入设备将其初始链路密钥与信任中心生成的新链路密钥进行交换。如果 **bdbTrustCenterRequireKeyExchange** 等于 **TRUE**，则加入节点必须经历链路密钥交换过程；无法交换链路密钥将导致节点从网络中移除。如果 **bdbTrustCenterRequireKeyExchange** 等于 **FALSE**，则信任中心将允许加入节点保留在网络上而不交换其初始链路密钥。
 
 此属性被 ZigBee 协调器节点使用。
 
@@ -586,11 +591,11 @@ Touchlink preconfigured link key (0:15) = 0xc0 0xc1 0xc2 0xc3
 * 查找和绑定。在实现简单设备类的设备上应（SHALL）支持定位和绑定到其他设备上的应用簇的能力，并且可以（MAY）在实现动态或节点设备类的设备上也支持该能力。
 * Touchlink commissioning。节点可以（MAY）支持基于邻近度的 commissioning 机制。如果支持 touchlink commissioning，则节点应（SHALL）支持作为 touchlink 发起者，目标或两者。
 
-一个实现可以（MAY）随时使用 commissioning，例如，可以随时对整个节点执行网络转向，或者在适合应用程序的任何端点上随时执行查找和绑定。但是，每次使用时都应（SHALL）按照最高级 commissioning 过程中的规定执行。
+一个实现可以（MAY）随时使用 commissioning，例如，可以随时对整个节点执行网络转向，或者在适合应用程序的任何端点上随时执行查找和绑定。但是，每次使用时都应（SHALL）按照顶级 commissioning 过程中的规定执行。
 
 例如，在单个端点上实现温度传感器设备的节点可以在激活特定用户按钮时使用 commissioning 过程。类似地，在两个端点（每个开关一个）上实现 开/关 灯开关设备的节点可以在激活每个开关时使用 commissioning 过程。
 
-所需的 commissioning 过程由每个活动端点定义的若干属性控制（另请参见子条款 5.3）：**bdbCommissioningMode**，**bdbCommissioningGroupID** 和 **bdbCommissioningStatus**。要执行 commissioning，需要在 **bdbCommissioningMode** 属性中指定要在当时执行的 commissioning 选项。如果需要查找和绑定，还要指定 **bdbCommissioningGroupID**（用于查找和绑定的分组）。请注意，如果不需要分组绑定，则 **bdbCommissioningGroupID** 属性被设置为 0xffff。执行请求的 commissioning 选项后，**bdbCommissioningStatus** 属性将指示尝试的状态。
+所需的 commissioning 过程由每个活动端点定义的若干属性控制（另请参见子条款 5.3）：**bdbCommissioningMode**，**bdbCommissioningGroupID** 和 **bdbCommissioningStatus**。要执行 commissioning，需要在 **bdbCommissioningMode** 属性中指定要在当时执行的 commissioning 选项。如果需要查找和绑定，还要指定 **bdbCommissioningGroupID**（用于查找和绑定的分组）。请注意，如果不需要分组绑定，则 **bdbCommissioningGroupID** 属性被设置为 **0xffff**。执行请求的 commissioning 选项后，**bdbCommissioningStatus** 属性将指示尝试的状态。
 
 **bdbCommissioningMode** 中指定的 commissioning 选项按照最低有效位的顺序执行，即首先是 touchlink commissioning，然后是网络转向，再后是网络形成，最后是查找和绑定，如下所示：
 
@@ -614,9 +619,9 @@ Touchlink preconfigured link key (0:15) = 0xc0 0xc1 0xc2 0xc3
 
 ## 6.7 默认报告配置
 
-对于指定为可报告的每个已实现属性，应（SHALL）存在一个默认的报告配置（最大报告间隔为 0x0000 或在 0x003d 到 0xfffe 范围内）。默认报告配置是这样的：如果在节点上创建了给定簇的绑定，则节点应（SHALL）向该绑定发送报告，而无需设置任何额外的报告配置。可以（MAY）随时覆盖属性的默认报告配置。在这种情况下，应（SHALL）使用更新后的报告配置。
+对于指定为可报告的每个已实现属性，应（SHALL）存在一个默认的报告配置（最大报告间隔为 **0x0000** 或在 **0x003d** 到 **0xfffe** 范围内）。默认报告配置是这样的：如果在节点上创建了给定簇的绑定，则节点应（SHALL）向该绑定发送报告，而无需设置任何额外的报告配置。可以（MAY）随时覆盖属性的默认报告配置。在这种情况下，应（SHALL）使用更新后的报告配置。
 
-从同一属性的上一个报告开始，当经过的时间等于该属性的最大报告间隔时，应（SHALL）生成一个报告。配置后的第一个报告的时间未被指定。如果最大报告间隔被设置为 0x0000，则不会定期报告，但基于更改的报告仍可操作。
+从同一属性的上一个报告开始，当经过的时间等于该属性的最大报告间隔时，应（SHALL）生成一个报告。配置后的第一个报告的时间未被指定。如果最大报告间隔被设置为 **0x0000**，则不会定期报告，但基于更改的报告仍可操作。
 
 考虑一个简单的湿度传感器以作为一个默认报告配置的示例。湿度传感器最好清楚其报告配置应该是什么，以节省电池电量。因此，它应该具有一个默认报告配置，以便一旦它加入网络并创建绑定，它就会立即开始发送其湿度报告。
 
@@ -651,11 +656,104 @@ ZigBee 规范仅要求父节点缓冲单个消息 7.5 秒。该单个缓冲区�
 ![Figure 1 – Initialization procedure](./pic/f1.jpg)
 
 1. 节点应（SHALL）恢复其持久的 ZigBee 数据，如子条款 6.9 中所述。
-2. 如果 **bdbNodeIsOnANetwork** 等于 FALSE，则节点应（SHALL）从 step 6 继续。
-3. 如果节点的节点描述符的逻辑类型字段不等于 0b010（ZigBee 终端设备），则它应（SHALL）从 step 8 继续。
-4. 节点应（SHALL）尝试重新加入网络。为此，节点发出 **NLME-JOIN.request** 原语，其中 **ExtendedPANId** 参数设置为已知网络的扩展 PAN 标识符，**RejoinNetwork** 参数设置为 0x02，**ScanChannels** 参数设置为 0x00000000，**ScanDuration** 参数设置为 0x00，**CapabilityInformation** 为适合节点的设置，**SecurityEnable** 参数设置为 TRUE。在从 NWK 层接收到 **NLME-JOIN.confirm** 原语时，使用 NWK 重新加入以通知节点所请求加入网络的状态。
-5. 如果 **NLME-JOIN.confirm** 原语的 **Status** 参数等于 SUCCESS，则节点应（SHALL）广播 **Device_annce** ZDO 命令并从 step 8 继续。如果 **NLME-JOIN.confirm** 原语的 **Status** 参数不等于 SUCCESS，则节点可以（MAY）在某个应用程序特定的时间重试该过程，或者从 step 8 继续。实现的责任是处理后续的重新加入尝试。
-6. 如果节点的节点描述符的逻辑类型字段不等于 0b001（ZigBee 路由器），则它应（SHALL）从 step 8 继续。
-7. 如果 **bdbNodeCommissioningCapability** 的第 3 位等于 1（即支持 touchlink），则节点应（SHALL）将其逻辑信道设置为 **bdbcTLPrimaryChannelSet** 中指定的信道之一。
+2. 如果 **bdbNodeIsOnANetwork** 等于 **FALSE**，则节点应（SHALL）从步骤 6 继续。
+3. 如果节点的节点描述符的逻辑类型字段不等于 **0b010**（ZigBee 终端设备），则它应（SHALL）从步骤 8 继续。
+4. 节点应（SHALL）尝试重新加入网络。为此，节点发出 **NLME-JOIN.request** 原语，其中 **ExtendedPANId** 参数设置为已知网络的扩展 PAN 标识符、**RejoinNetwork** 参数设置为 **0x02**、**ScanChannels** 参数设置为 **0x00000000**、**ScanDuration** 参数设置为 **0x00**、**CapabilityInformation** 为适合节点的设置、**SecurityEnable** 参数设置为 **TRUE**。在从 NWK 层接收到 **NLME-JOIN.confirm** 原语时，节点将被通知其请求的状态以使用 NWK 重新加入来加入网络。
+5. 如果 **NLME-JOIN.confirm** 原语的 **Status** 参数等于 **SUCCESS**，则节点应（SHALL）广播 **Device\_annce** ZDO 命令并从步骤 8 继续。如果 **NLME-JOIN.confirm** 原语的 **Status** 参数不等于 **SUCCESS**，则节点可以（MAY）在某个应用程序特定的时间重试该过程，或者从步骤 8 继续。实现的责任是处理后续的重新加入尝试。
+6. 如果节点的节点描述符的逻辑类型字段不等于 **0b001**（ZigBee 路由器），则它应（SHALL）从步骤 8 继续。
+7. 如果 **bdbNodeCommissioningCapability** 的第 3 位等于 **1**（即支持 touchlink），则节点应（SHALL）将其逻辑信道设置为 **bdbcTLPrimaryChannelSet** 中指定的信道之一。
 8. 然后节点应（SHALL）终止该初始化过程。
+
+# 8. Commissioning
+
+当节点不在网络上、在网络上但未绑定到另一个设备或在网络上并绑定到另一个设备时，可以（MAY）调用 Commissioning。Commissioning 可以（MAY）通过用户交互、一些空中机制（例如在 Identify 簇中定义的）或由应用软件直接调用（例如在初始化后自动调用）来触发。本节中指定的 commissioning 过程定义了调用 commissioning 时的步骤和状态。
+
+实现应（SHALL）提供一种使用网络转向以调用 commissioning 的机制（参见子条款 8.2 和 8.3）。此外，简单设备应（SHALL）提供一种使用查找和绑定以调用 commissioning 的机制（参见子条款 8.5 和 8.6）。同样，如果动态设备支持查找和绑定，那么其应（SHALL）提供一种使用查找和绑定以调用 commissioning 的机制。如果应用程序要求，这些 commissioning 动作可以（MAY）被重载。实现还可以（MAY）为其他 commissioning 动作提供单独的或重载的机制。
+
+通过 **bdbCommissioningMode** 属性控制每个端点的 Commissioning 过程，并且在 commissioning 开始之前，应该（SHOULD）视情况对每个应用刺激进行配置。例如，这允许实现使用网络转向和查找和绑定来重载应用刺激。
+
+## 8.1 顶级 commissioning 过程
+
+本节定义了在某些触发器上激活的顶级 commissioning 过程。
+
+触发器是通过一些应用程序定义的刺激，例如按下按钮或来自用户界面的某些命令。刺激可以是每个端点的，也可以是整个节点的。发生这种情况的标准是制造商特定的。
+
+应用程序通过将所需端点上的 **bdbCommissioningMode** 属性设置为适当的值（请参阅子条款 5.3.2）来配置所需的 commissioning 动作，然后执行下述过程。
+
+Figure 2 展示了此过程的简化版本，以供快速参考。
+
+![Figure 2 – Top level commissioning procedure](./pic/f2.jpg)
+
+1. 在收到 commissioning 应用刺激后，设备首先将 **bdbCommissioningStatus** 设置为 **SUCCESS**，然后通过检查 **bdbCommissioningMode** 来确定所需的 commissioning 步骤。
+2. 如果 **bdbCommissioningMode** 的第 0 位等于 **0**（即无需 touchlink），则设备应（SHALL）从步骤 5 继续。
+3. 节点应遵循 touchlink 过程（作为发起者）（参见子条款 8.7）。
+4. 如果 **bdbCommissioningStatus** 不等于 **NO\_SCAN\_RESPONSE**（即对来自发起者的 touchlink 扫描请求有响应，表示 touchlink 成功），则设备应（SHALL）从步骤 13 继续。
+5. 如果 **bdbCommissioningMode** 的第 1 位等于 **0**（即无需网络转向），则设备应（SHALL）从步骤 7 继续。
+6. 如果 **bdbNodeIsOnANetwork** 等于 **TRUE**，则节点应（SHALL）遵循已在网节点的网络转向过程（参见子条款 8.2）。如果 **bdbNodeIsOnANetwork** 等于 **FALSE**，则节点应（SHALL）遵循非在网节点的网络转向过程（参见子条款 8.3）。
+7. 如果 **bdbCommissioningMode** 的第 2 位等于 **0**（即无需形成网络），则设备应（SHALL）从步骤 10 继续。
+8. 如果 **bdbNodeIsOnANetwork** 等于 **TRUE**，则设备应（SHALL）从步骤 10 继续。
+9. 如果节点的节点描述符的逻辑类型字段等于 **0b000**（ZigBee 协调器）或 **0b001**（ZigBee 路由器），则节点应（SHALL）遵循网络形成过程（参见子条款 8.4）。
+10. 如果 **bdbCommissioningMode** 的第 3 位等于 **0**（即无需查找和绑定），则设备应（SHALL）从步骤 13 继续。
+11. 如果 **bdbNodeIsOnANetwork** 等于 **FALSE**，则设备应（SHALL）从步骤 13 继续。
+12. 如果 **bdbCommissioningMode** 的第 3 位等于 **1**，则该节点应（SHALL）根据（节点上定义的）端点上实现的簇的类别来遵循查找和绑定过程。对于类型 1 客户端或类型 2 服务端簇，应用程序应（SHALL）执行查找和绑定（作为发起者端点）（请参阅子条款 8.6）。相反，对于类型 1 服务端或类型 2 客户端簇，应用程序应（SHALL）执行查找和绑定（作为目标端点）（请参阅子条款 8.5）。请注意，当 commissioning 多个设备端点并且可以并行处理某些设备端点时，应用程序还有责任确定查找和绑定的执行顺序。
+13. 设备应（SHALL）终止该顶级 commissioning 过程。
+
+## 8.2 已在网节点的网络转向过程
+
+本节定义已在网节点的网络转向过程。在此过程中，已在网节点将在一段有限的时间内开放网络以允许其他节点加入。
+
+Figure 3 展示了此过程的简化版本，以供快速参考。
+
+![Figure 3 – Network steering procedure for a node on a network](./pic/f3.jpg)
+
+1. 节点首先将 **bdbCommissioningStatus** 设置为 **IN\_PROGRESS**。
+2. 节点应（SHALL）广播 **Mgmt\_Permit\_Joining\_req** ZDO 命令，**PermitDuration** 字段设置为至少 **bdbcMinCommissioningTime**、**TC\_Significance** 字段设置为 **0x01**。
+3. 如果节点的节点描述符的逻辑类型字段等于 **0b000**（ZigBee 协调器）或 **0b001**（ZigBee 路由器），则节点发出 **NLME-PERMIT-JOINING.request** 原语，其 **PermitDuration** 参数设置为至少 **bdbcMinCommissioningTime**。在从 NWK 层接收到 **NLME-PERMIT-JOINING.confirm** 原语时，节点将被通知其请求的状态以激活许可加入。
+4. 然后，节点将 **bdbCommissioningStatus** 设置为 **SUCCESS**，并且它应（SHALL）终止已在网节点的网络转向过程。
+
+## 8.3 非在网节点的网络转向过程
+
+本节定义了非在网节点的网络转向过程。在此过程中，非在网节点将扫描开放网络，并且如果找到合适的节点则尝试加入。加入后，该节点被身份验证并接收网络密钥。最后，如果网络中存在信任中心，则该节点随后会将其预配置链路密钥与信任中心生成的链路密钥交换。
+
+为此过程定义了两个变量：布尔值 **vDoPrimaryScan**，用于控制节点通过 主要信道集/次要信道集 执行信道扫描；32-bit 位映像 **vScanChannels**，用于定义要扫描的当前信道集。
+
+Figure 4 展示了此过程的简化版本，以供快速参考。
+
+![Figure 4 – Network steering procedure for a node not on a network](./pic/f4.jpg)
+
+1. 节点首先将 **bdbCommissioningStatus** 设置为 **IN\_PROGRESS**、**vDoPrimaryScan** 设置为 **TRUE**、**vScanChannel** 设置为 **bdbPrimaryChannelSet**。如果 **bdbPrimaryChannelSet** 等于 **0x00000000**，则节点应（SHALL）从步骤 12 继续。
+2. 节点应（SHALL）执行信道扫描，以便发现在信道集的无线电范围内可用的网络。为此，节点发出 **NLME-NETWORK-DISCOVERY.request** 原语，其中 **ScanChannels** 参数设置为 **vScanChannels**、**ScanDuration** 参数设置为 **bdbScanDuration**。在从 NWK 层接收到 **NLME-NETWORK-DISCOVERY.confirm** 原语时，节点将被通知其请求的状态以发现网络。
+3. 如果 **NLME-NETWORK-DISCOVERY.confirm** 原语中的 **Status** 参数不等于 **SUCCESS**，则表示信道扫描不成功，节点应（SHALL）从步骤 12 继续。
+4. 节点应（SHALL）通过分析 **NetworkCount** 和 **NetworkDescriptor** 参数来确定是否找到了许可加入标志设置为 **TRUE** 的任何合适网络。由应用程序判定其是否属于合适网络。
+5. 如果在信道扫描中未找到合适的网络，则节点应（SHALL）从步骤 12 继续。
+6. 节点应（SHALL）尝试加入使用 MAC 关联找到的网络。为此，节点发出 **NLME-JOIN.request** 原语，其中 **ExtendedPANId** 参数设置为所选网络的扩展 PAN 标识符、**RejoinNetwork** 参数设置为 **0x00**、**ScanChannels** 参数设置为 **0x00000000**、**ScanDuration** 参数设置为 **0x00**、**CapabilityInformation** 为适合节点的设置、**SecurityEnable** 参数设置为 **FALSE**。在从 NWK 层接收到 **NLME-JOIN.confirm** 原语时，节点将被通知其请求的状态以使用 MAC 关联来加入网络。
+7. 如果 **NLME-JOIN.confirm** 原语中的 **Status** 参数不等于 **SUCCESS**，则表示加入不成功，节点应（SHALL）尝试从步骤 6 中加入到下一个合适的网络。注意，允许尝试再次加入同一网络，但这不应（SHALL NOT）连续尝试超过 **bdbcMaxSameNetworkRetryAttempts** 次（建议的（RECOMMENDED）连续次数为 **bdbcRecSameNetworkRetryAttempts**）。如果没有其他合适的网络可加入，则节点应（SHALL）从步骤 12 继续。
+8. 如果 **NLME-JOIN.confirm** 原语中的 **Status** 参数等于 **SUCCESS**，则表示加入成功，节点应（SHALL）至少等待 **apsSecurityTimeOutPeriod** 毫秒以进行身份验证，并从其父系接收网络密钥。注意，网络密钥可以从集中式安全网络中的信任中心进行隧道传输，其使用默认的全局信任中心链路密钥或通过安装码派生的预配置链路密钥进行加密；或者直接从分布式安全网络中的父系进行传输，其使用分布式安全全局链路密钥进行加密。节点应（SHALL）相应地设置 **bdbNodeJoinLinkKeyType**，以指示使用那种链路密钥来解密收到的网络密钥。
+9. 如果节点在 **apsSecurityTimeOutPeriod** 毫秒内未从其父系中接收到网络密钥、在 **apsSecurityTimeOutPeriod** 毫秒内收到网络密钥但无法解密或以其他方式认证失败，节点应（SHALL）重置其网络参数及选择加入下一个合适的网络并返回到步骤 6。注意，允许尝试再次加入同一网络，但这不应（SHALL NOT）连续尝试超过 **bdbcMaxSameNetworkRetryAttempts** 次（建议的（RECOMMENDED）连续次数为 **bdbcRecSameNetworkRetryAttempts**）。如果没有其他合适的网络可加入，则节点应（SHALL）从步骤 12 继续。
+10. 节点将 **bdbNodeIsOnANetwork** 设置为 **TRUE**，然后广播 **Device\_annce** ZDO 命令。如果 **apsTrustCenterAddress** 等于 **0xffffffffffffffff**，则节点应（SHALL）从步骤 13 继续。
+11. 节点应（SHALL）执行检索新信任中心链路密钥的过程（请参阅子条款 10.2.5）。如果该过程成功，则节点应（SHALL）从步骤 13 继续。如果不成功，则节点应（SHALL）在其旧网络上执行离开请求并重置其网络参数。然后，该节点将 **bdbNodeIsOnANetwork** 设置为 **FALSE**，并将 **bdbCommissioningStatus** 设置为 **TCLK\_EX\_FAILURE**。为了执行离开请求，节点会将 **NWME-LEAVE.request** 原语发送到 NWK 层，其中 **DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 参数设置为 **FALSE**、**Rejoin** 参数设置为 **FALSE**。在收到 **NLME-LEAVE.confirm** 原语时，节点将被通知其请求的状态以离开网络。然后，节点应（SHALL）终止非在网节点的网络转向过程。
+12. 如果 **vDoPrimaryScan** 等于 **FALSE** 或 **bdbSecondaryChannelSet** 等于 **0x00000000**，则节点应（SHALL）从步骤 16 继续。如果 **bdbSecondaryChannelSet** 不等于 **0x00000000**，则节点应（SHALL）将 **vDoPrimaryScan** 设置为 **FALSE**、**vScanChannels** 设置为 **bdbSecondaryChannelSet** 并从步骤 2 继续。
+13. 节点应（SHALL）广播 **Mgmt\_Permit\_Joining\_req** ZDO 命令，其中 **PermitDuration** 字段设置为至少 **bdbcMinCommissioningTime**、**TC\_Significance** 字段设置为 **0x01**。注意，这将导致接收此命令的节点重置计时器，在此期间，其许可加入标志被激活，从而延长了其他新节点的加入时间。
+14. 如果节点能够允许新节点加入，则它应（SHALL）激活其许可加入标志。为此，节点发出 **NLME-PERMIT-JOINING.request** 原语，其中 **PermitDuration** 参数设置为至少 **bdbcMinCommissioningTime**。在从 NWK 层接收到 **NLME-PERMIT-JOINING.confirm** 原语时，节点将被通知其请求的状态以激活许可加入。
+15. 然后，节点将 **bdbCommissioningStatus** 设置为 **SUCCESS**。如果节点支持 **touchlink**，则它会将 **aplFreeNwkAddrRangeBegin**、**aplFreeNwkAddrRangeEnd**、**aplFreeGroupID-RangeBegin** 和 **aplFreeGroupIDRangeEnd** 属性的值全部设置为 **0x0000**（表示节点已使用 MAC 关联加入网络）。然后，节点应（SHALL）终止非在网节点的网络转向过程。
+16. 节点可以（MAY）使用某些制造商特定的过程进行重试或将 **bdbCommissioningStatus** 设置为 **NO\_NETWORK**，然后它应（SHALL）终止非在网节点的网络转向过程。如果尝试制造商特定的过程，则 **bdbCommissioningStatus** 和 **bdbNodeIsOnANetwork** 属性会在其终止时相应地更新，以便使 commissioning 过程保持一致性。
+
+## 8.4 网络形成过程
+
+本节定义了节点的网络形成过程。在此过程中，ZigBee 协调器节点形成集中式安全网络并激活其信任中心功能，而 ZigBee 路由器节点则形成分布式安全网络。
+
+为此过程定义了两个变量：布尔值 **vDoPrimaryScan**，用于控制节点通过 主要信道集/次要信道集 执行信道扫描；32-bit 位映像 **vScanChannels**，用于定义要扫描的当前信道集。
+
+Figure 5 展示了此过程的简化版本，以供快速参考。
+
+![Figure 5 – Network formation procedure](./pic/f5.jpg)
+
+1. 节点首先将 **bdbCommissioningStatus** 设置为 **IN\_PROGRESS**、**vDoPrimaryScan** 设置为 **TRUE**、**vScanChannel** 设置为 **bdbPrimaryChannelSet**。如果 **bdbPrimaryChannelSet** 等于 **0x00000000**，则节点应（SHALL）从步骤 4 继续。
+2. 节点应（SHALL）尝试在其中一个指定的信道上形成网络。为此，节点发出 **NLME-NETWORK-FORMATION.request** 原语，其中 **ScanChannels** 参数设置为 **vScanChannels**、**ScanDuration** 参数设置为 **bdbScanDuration**、**BeaconOrder** 参数设置为 **0x0f**、**SuperframeOrder** 设置为 **0x00**、**BatteryLifeExtension** 参数设置为 **FALSE**。在从 NWK 层接收到 **NLME-NETWORK-FORMATION.confirm** 原语时，节点将被通知其请求的状态以形成一个新网络。
+3. 如果 **NLME-NETWORK-FORMATION.confirm** 原语的 **Status** 参数等于 **SUCCESS**，则表示已形成新网络，节点应（SHALL）从步骤 5 继续。
+4. 如果 **vDoPrimaryScan** 等于 **FALSE** 或 **bdbSecondaryChannelSet** 等于 **0x00000000**，则节点应（SHALL）从步骤 8 继续。如果 **bdbSecondaryChannelSet** 不等于 **0x00000000**，则节点应（SHALL）将 **vDoPrimaryScan** 设置为 **FALSE**、**vScanChannels** 设置为 **bdbSecondaryChannelSet** 并从步骤 2 继续。
+5. 节点将 **bdbNodeIsOnANetwork** 设置为 **TRUE**。如果节点的节点描述符的逻辑类型字段不等于 **0b000**（ZigBee 协调器），则节点应（SHALL）从步骤 7 继续。
+6. ZigBee 协调器节点应（SHALL）启动其信任中心功能（根据 \[R1\] 的子条款 4.6.1）。
+7. 节点将 **bdbCommissioningStatus** 设置为 **SUCCESS**，并且应（SHALL）终止网络形成过程。
+8. 节点将 **bdbCommissioningStatus** 设置为 **FORMATION\_FAILURE**，并且应（SHALL）终止网络形成过程。
 
