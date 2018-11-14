@@ -88,6 +88,12 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
             - [8.7.1.4 Group identifiers begin/end 字段](#8714-group-identifiers-beginend-字段)
             - [8.7.1.5 Free network/group address range begin/end 字段](#8715-free-networkgroup-address-range-beginend-字段)
     - [8.8 目标的 Touchlink 过程](#88-目标的-touchlink-过程)
+- [9. 重置](#9-重置)
+    - [9.1 通过 basic 簇重置](#91-通过-basic-簇重置)
+    - [9.2 通过 touchlink commissioning 簇重置](#92-通过-touchlink-commissioning-簇重置)
+    - [9.3 通过网络的 leave 命令重置](#93-通过网络的-leave-命令重置)
+    - [9.4 通过 Mgmt\_Leave\_req ZDO 命令重置](#94-通过-mgmt_leave_req-zdo-命令重置)
+    - [9.5 通过本地动作重置](#95-通过本地动作重置)
 
 # 1. 引言 
 
@@ -899,14 +905,68 @@ Figure 9 展示了此过程的简化版本，以供快速参考。
 9. 目标应（SHALL）通过应用特定的方式决定是否允许自己启动新网络。如果目标决定不启动新网络，它应（SHALL）生成和单播 **touchlink commissioning** 簇的 **network start response** inter-PAN 命令帧（**inter-PAN transaction identifier** 字段设置为 **vIPTransID**、**Status** 为 **0x01**（失败））回发起者。目标应（SHALL）终止目标的 touchlink 过程。
 10. 目标应（SHALL）执行网络发现以建立网络参数。为此，目标将 **NWME-NETWORK-DISCOVERY.request** 原语（**ScanChannels** 参数设置为与接收到的 **network start request** inter-PAN 命令帧的 **logical channel** 字段一致（如果其不等于零）或设置为 **bdbcTLPrimaryChannelSet** （如果其等于零），并且 **ScanDuration** 设置为 **bdbScanDuration**）发布到 NWK 层。在从 NWK 层接收到 **NLME-NETWORK-DISCOVERY.confirm** 原语时，将结果通知目标。基于这些结果，目标应（SHALL）为网络的逻辑信道、PAN 标识符和扩展 PAN 标识符选择合适的值。
 11. 目标应（SHALL）随后生成和单播 **network start response** inter-PAN 命令帧回发起者。**inter-PAN transaction identifier** 字段应（SHALL）设置为 **vIPTransID**。**Status** 字段应（SHALL）设置为 **0x00**（成功）。所有其他字段应（SHALL）根据已验证的网络参数进行设置。
-12. 如果 **bdbNodeIsOnANetwork** 等于 **TRUE**，则目标应（SHALL）在其旧网络上执行离开请求。为此，目标将 **NWME-LEAVE.request** 原语（**DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 为 **FALSE**、**Rejoin** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-LEAVE.confirm** 原语后，将通知目标其请求的状态。然后，目标应（SHALL）清除所有 ZigBee 持久数据（除了传出的 NWK 帧计数器）（参见子条款 6.9）。
+12. 如果 **bdbNodeIsOnANetwork** 等于 **TRUE**，则目标应（SHALL）在其旧网络上执行离开请求。为此，目标将 **NWME-LEAVE.request** 原语（**DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 为 **FALSE**、**Rejoin** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-LEAVE.confirm** 原语后，将通知目标其请求的状态。然后，目标应（SHALL）清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）。
 13. 目标应（SHALL）将新网络参数复制到其网络信息库，并在新网络上开始操作。为此，目标将 **NLME-START-ROUTER.request** 原语（**BeaconOrder** 参数设置为 **0x0f**、**SuperframeOrder** 为 **0x00**、**BatteryLifeExtension** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-START-ROUTER.confirm** 原语后，将通知目标其请求的状态。
 14. 目标应（SHALL）代表发起者执行一个直接加入。为此，目标将 **NLME-DIRECT-JOIN.request** 原语（**DeviceAddress** 参数设置为发起者的 IEEE 地址）发布到 NWK 层。在收到 **NLME-DIRECT-JOIN.confirm** 原语后，将通知目标其请求的状态。然后目标应（SHALL）从步骤 20 继续。
 15. 在接收到 **network join router request** 或 **network join end device** inter-PAN 命令帧之外的其他命令时，目标应（SHALL）从步骤 21 继续。如果接收到 **network join router request** inter-PAN 命令帧且节点描述符的 **logical type** 字段不等于 **0b001**（ZigBee 路由器）或接收到 **network join end device** inter-PAN 命令帧且节点描述符的 **logical type** 字段不等于 **0b010**（ZigBee 终端设备），则目标应（SHALL）丢弃该帧并从步骤 4 继续。
 16. 目标应（SHALL）通过应用特定的方式决定是否允许自己加入到另一个网络。如果目标决定不加入另一个网络，它应（SHALL）生成和单播相应的 **touchlink commissioning** 簇的 **network join router response** 或 **network join end device response** inter-PAN 命令帧（**inter-PAN transaction identifier** 字段设置为 **vIPTransID**、**Status** 为 **0x01**（失败））回发起者，这取决于接收到的是 **network join router request** 还是 **network join end device request** inter-PAN 命令帧。目标应（SHALL）终止目标的 touchlink 过程。
 17. 目标应（SHALL）生成和单播 **touchlink commissioning** 簇的 **network join router response** 或 **network join end device response** inter-PAN 命令帧（**inter-PAN transaction identifier** 字段设置为 **vIPTransID**、**Status** 为 **0x00**（成功））回发起者，这取决于接收到的是 **network join router request** 还是 **network join end device request** inter-PAN 命令帧。目标将 **bdbNodeJoinLinkKeyType** 设置为 **0x03**（touchlink 预配置链路密钥）。
-18. 如果 **bdbNodeIsOnANetwork** 等于 **TRUE**，则目标应（SHALL）在其旧网络上执行离开请求。为此，目标将 **NWME-LEAVE.request** 原语（**DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 为 **FALSE**、**Rejoin** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-LEAVE.confirm** 原语后，将通知目标其请求的状态。然后，目标应（SHALL）清除所有 ZigBee 持久数据（除了传出的 NWK 帧计数器）（参见子条款 6.9）。
+18. 如果 **bdbNodeIsOnANetwork** 等于 **TRUE**，则目标应（SHALL）在其旧网络上执行离开请求。为此，目标将 **NWME-LEAVE.request** 原语（**DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 为 **FALSE**、**Rejoin** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-LEAVE.confirm** 原语后，将通知目标其请求的状态。然后，目标应（SHALL）清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）。
 19. 目标应（SHALL）将新网络参数复制到其网络信息库。如果节点描述符的 **logical type** 字段等于 **0b010**（ZigBee 终端设备），则目标应（SHALL）从步骤 20 继续。目标将 **NLME-START-ROUTER.request** 原语（**BeaconOrder** 参数设置为 **0x0f**、**SuperframeOrder** 为 **0x00**、**BatteryLifeExtension** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-START-ROUTER.confirm** 原语后，将通知目标其请求的状态。
 20. 目标将 **bdbNodeIsOnANetwork** 设置为 **TRUE**、**apsTrustCenterAddress** 为 **0xffffffffffffffff**，并且它应（SHALL）确定 **apsDeviceKeyPairSet** 中是否存在一个条目（**DeviceAddress** 字段对应为 **0xffffffffffffffff**）。如果此条目不存在，则目标应（SHALL）创建一个新条目（**DeviceAddress** 字段设置为 **0xffffffffffffffff**、**apsLinkKeyType** 为 **0x01**、**LinkKey** 为分布式安全全局链路密钥、**OutgoingFrameCounter** 和 **IncomingFrameCounter** 为 **0**）。然后，目标应（SHALL）终止目标的 touchlink 过程。
 21. 在接收到 **reset to factory new request** inter-PAN 命令帧之外的其他命令时，目标应（SHALL）丢弃该命令并从步骤 4 继续。目标应（SHALL）遵循 touchlink 重置过程（参见子条款 9.2），然后终止目标的 touchlink 过程。
+
+# 9. 重置
+
+节点实现应（SHALL）提供交互机制以将其自身重置为其出厂设置。该机制应（SHALL）可供产品安装者使用。
+
+ZigBee-PRO 提供了多种用于重置（具有各种级别的影响）的机制，从重置应用簇属性到清除 ZigBee 持久数据（如网络设置，分组和绑定）以及离开网络。所有重置机制都应（SHALL）保留由所有设备维护的单个传出 NWK 帧计数器。
+
+## 9.1 通过 basic 簇重置
+
+**basic** 簇提供 **reset to factory defaults** 命令，该命令仅将目标设备上支持的所有簇的属性重置为其默认设置，即网络设置、分组和绑定不受此命令的影响。
+
+要使用 **basic** 簇将目标设备上的所有属性重置为其默认值，发起者设备应（SHALL）生成并向目标设备传输 **basic** 簇的 **reset to factory defaults** 命令。
+
+在收到 **basic** 簇的 **reset to factory defaults** 命令时，目标设备应（SHALL）将目标设备上支持的所有簇的属性重置为其默认值。应（SHALL）保留所有其他值，如网络设置，帧计数器，分组和绑定。
+
+## 9.2 通过 touchlink commissioning 簇重置
+
+**touchlink commissioning** 簇提供 **reset to factory new request** 命令，该命令清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9），并执行重置以使目标处于与出厂时一样的状态。该命令应（SHALL）通过 inter-PAN 通信传输。注意，由于此命令使用 inter-PAN 通信传输，因此不使用安全性。
+
+要使用 **touchlink commissioning** 簇将目标重置为其新出厂状态，发起者应（SHALL）首先遵循发起者的 touchlink 过程（带扩展信道扫描）的前 12 个步骤（参见子条款 8.7）。然后，发起者应（SHALL）生成并向预期目标传输 **touchlink commissioning** 簇的 **reset to factory new request** inter-PAN 命令帧。
+
+在收到 **touchlink commissioning** 簇的 **reset to factory new request** inter-PAN 命令帧时，如果目标位于集中式安全网络上（即 **apsTrustCenterAddress** 不等于 **0xffffffffffffffff**），则目标可以（MAY）在产品特定的条件下丢弃该帧并且不执行进一步的处理。
+
+在收到 **touchlink commissioning** 簇的 **reset to factory new request** inter-PAN 命令帧（带无效事务标识符（即在当前活动事务中未接收到帧））时，目标应（SHALL）丢弃该帧并且不执行进一步的处理。
+
+在收到 **touchlink commissioning** 簇的 **reset to factory new request** inter-PAN 命令帧（带有效事务标识符（即紧接着 touchlink 设备发现））时，目标应（SHALL）在网络上执行离开请求。为此，目标将 **NWME-LEAVE.request** 原语（**DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 为 **FALSE**、**Rejoin** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-LEAVE.confirm** 原语后，将通知目标其请求的状态。
+
+然后，目标应（SHALL）清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）。
+
+Figure 10 展示了通过 **touchlink commissioning** 簇将目标重置为新出厂的事件序列。
+
+![Figure 10 – Resetting a target to factory new via the touchlink commissioning cluster](./pic/f10.jpg)
+
+## 9.3 通过网络的 leave 命令重置
+
+ZigBee-PRO 提供网络的 **leave** 命令，其通过清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）来请求远程节点离开网络，并执行重置以使节点处于与出厂时一样的状态。
+
+网络的 **leave** 命令在 \[R1\] 的子条款 3.4.4 中规定，其用法在 \[R1\] 的子条款 3.6.1.10 中规定。
+
+## 9.4 通过 Mgmt\_Leave\_req ZDO 命令重置
+
+ZigBee-PRO 提供 **Mgmt\_Leave\_req** ZDO 命令，该命令通过清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）来请求远程节点离开网络，并执行重置以使节点处于与出厂时一样的状态。
+
+**Mgmt\_Leave\_req** ZDO 命令在 \[R1\] 的子条款 2.4.3.3.5 中规定。
+
+## 9.5 通过本地动作重置
+
+建议（RECOMMENDED）提供本地动作以允许重置节点，这将清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）来请求远程节点离开网络，并执行重置以使节点处于与出厂时一样的状态。
+
+应该（SHOULD）实现一些用户可访问的特定应用刺激以调用此本地动作，例如节点上的外部按钮或通过某些软件激活。建议（RECOMMENDED）仅在用户物理地向节点提出时才允许激活此过程。
+
+如果节点从应用程序中接收某些刺激以重置并离开其当前网络，则它应（SHALL）在网络上执行离开请求。为此，节点将 **NWME-LEAVE.request** 原语（**DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 为 **FALSE**、**Rejoin** 为 **FALSE**）发布到 NWK 层。在收到 **NLME-LEAVE.confirm** 原语后，将通知节点其请求的状态。
+
+然后，节点应（SHALL）清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）。
 
