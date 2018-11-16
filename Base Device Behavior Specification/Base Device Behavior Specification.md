@@ -94,6 +94,21 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
     - [9.3 通过网络的 leave 命令重置](#93-通过网络的-leave-命令重置)
     - [9.4 通过 Mgmt\_Leave\_req ZDO 命令重置](#94-通过-mgmt_leave_req-zdo-命令重置)
     - [9.5 通过本地动作重置](#95-通过本地动作重置)
+- [10. 安全](#10-安全)
+    - [10.1 安装码](#101-安装码)
+        - [10.1.1 安装码格式](#1011-安装码格式)
+            - [10.1.1.1 CRC 算法信息](#10111-crc-算法信息)
+        - [10.1.2 散列函数](#1012-散列函数)
+            - [10.1.2.1 MMO 散列代码示例](#10121-mmo-散列代码示例)
+    - [10.2 节点操作](#102-节点操作)
+        - [10.2.1 加入节点的策略值](#1021-加入节点的策略值)
+            - [10.2.1.1 acceptNewUnsolicitedTrustCenterLinkKey 策略](#10211-acceptnewunsolicitedtrustcenterlinkkey-策略)
+            - [10.2.1.2 acceptNewUnsolicitedApplicationLinkKey 策略](#10212-acceptnewunsolicitedapplicationlinkkey-策略)
+        - [10.2.2 信任中心地址](#1022-信任中心地址)
+        - [10.2.3 信任中心链路密钥](#1023-信任中心链路密钥)
+        - [10.2.4 请求链路密钥](#1024-请求链路密钥)
+        - [10.2.5 信任中心链路密钥交换过程](#1025-信任中心链路密钥交换过程)
+        - [10.2.6 接收新链路密钥](#1026-接收新链路密钥)
 
 # 1. 引言 
 
@@ -111,7 +126,7 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
 
 ## 1.2 目的
 
-基础设备行为规范的目的是指定在 ZigBee-PRO 栈上运行的基础设备的环境，初始化，commissioning 和操作过程，以确保配置文件的互操作性。
+基础设备行为规范的目的是指定在 ZigBee-PRO 协议栈上运行的基础设备的环境，初始化，commissioning 和操作过程，以确保配置文件的互操作性。
 
 ## 1.3 一致性级别
 
@@ -238,7 +253,7 @@ EZ-Mode 查找和绑定是通过在两个或多个设备上匹配的应用簇之
 
 **节点（Node）：**
 
-节点定义为在单个网络上的具有单个 IEEE 地址的 ZigBee-PRO 栈的单个实例。节点由一个或多个逻辑设备实例组成，每个逻辑设备实例在端点上表示，并且节点可以具有节点端点，其是整个节点的示例，例如端点 0 上的 ZDO（另请参见 \[R3\]）。
+节点定义为在单个网络上的具有单个 IEEE 地址的 ZigBee-PRO 协议栈的单个实例。节点由一个或多个逻辑设备实例组成，每个逻辑设备实例在端点上表示，并且节点可以具有节点端点，其是整个节点的示例，例如端点 0 上的 ZDO（另请参见 \[R3\]）。
 
 **简单设备（Simple device）：**
 
@@ -749,7 +764,7 @@ Figure 4 展示了此过程的简化版本，以供快速参考。
 10. 节点将 **bdbNodeIsOnANetwork** 设置为 **TRUE**，然后广播 **Device\_annce** ZDO 命令。如果 **apsTrustCenterAddress** 等于 **0xffffffffffffffff**，则节点应（SHALL）从步骤 13 继续。
 11. 节点应（SHALL）执行检索新信任中心链路密钥的过程（请参阅子条款 10.2.5）。如果该过程成功，则节点应（SHALL）从步骤 13 继续。如果不成功，则节点应（SHALL）在其旧网络上执行离开请求并重置其网络参数。然后，该节点将 **bdbNodeIsOnANetwork** 设置为 **FALSE**，并将 **bdbCommissioningStatus** 设置为 **TCLK\_EX\_FAILURE**。为了执行离开请求，节点会将 **NWME-LEAVE.request** 原语发布到 NWK 层（**DeviceAddress** 参数设置为 **NULL**、**RemoveChildren** 设置为 **FALSE**、**Rejoin** 设置为 **FALSE**）。在收到 **NLME-LEAVE.confirm** 原语时，将通知节点其请求的状态。然后，节点应（SHALL）终止非在网节点的网络转向过程。
 12. 如果 **vDoPrimaryScan** 等于 **FALSE** 或 **bdbSecondaryChannelSet** 等于 **0x00000000**，则节点应（SHALL）从步骤 16 继续。如果 **bdbSecondaryChannelSet** 不等于 **0x00000000**，则节点应（SHALL）将 **vDoPrimaryScan** 设置为 **FALSE**、**vScanChannels** 设置为 **bdbSecondaryChannelSet** 并从步骤 2 继续。
-13. 节点应（SHALL）广播 **Mgmt\_Permit\_Joining\_req** ZDO 命令（**PermitDuration** 字段设置为至少 **bdbcMinCommissioningTime**、**TC\_Significance** 设置为 **0x01**）。注意，这将导致接收此命令的节点重置计时器，在此期间，其许可加入标志被激活，从而延长了其他新节点的加入时间。
+13. 节点应（SHALL）广播 **Mgmt\_Permit\_Joining\_req** ZDO 命令（**PermitDuration** 字段设置为至少 **bdbcMinCommissioningTime**、**TC\_Significance** 设置为 **0x01**）。注意，这将导致接收此命令的节点重置定时器，在此期间，其许可加入标志被激活，从而延长了其他新节点的加入时间。
 14. 如果节点能够允许新节点加入，则它应（SHALL）激活其许可加入标志。为此，节点发出 **NLME-PERMIT-JOINING.request** 原语（**PermitDuration** 参数设置为至少 **bdbcMinCommissioningTime**）。在从 NWK 层接收到 **NLME-PERMIT-JOINING.confirm** 原语时，将通知节点其请求的状态。
 15. 然后，节点将 **bdbCommissioningStatus** 设置为 **SUCCESS**。如果节点支持 **touchlink**，则它会将 **aplFreeNwkAddrRangeBegin**、**aplFreeNwkAddrRangeEnd**、**aplFreeGroupID-RangeBegin** 和 **aplFreeGroupIDRangeEnd** 属性的值全部设置为 **0x0000**（表示节点已使用 MAC 关联加入网络）。然后，节点应（SHALL）终止非在网节点的网络转向过程。
 16. 节点可以（MAY）使用某些制造商特定的过程进行重试或将 **bdbCommissioningStatus** 设置为 **NO\_NETWORK**，然后它应（SHALL）终止非在网节点的网络转向过程。如果尝试制造商特定的过程，则 **bdbCommissioningStatus** 和 **bdbNodeIsOnANetwork** 属性会在其终止时相应地更新，以便使 commissioning 过程保持一致性。
@@ -896,8 +911,8 @@ Figure 9 展示了此过程的简化版本，以供快速参考。
 
 1. 在接收到 **touchlink commissioning** 簇的 **scan request** inter-PAN 命令帧之外的其他命令时，目标应（SHALL）终止目标的 touchlink 过程。
 2. 目标将 **vIPTransID** 设置为 **inter-PAN transaction identifier** 字段的值，并且它应（SHALL）确定是否要响应。如果接收到 **scan request** 命令（RSSI 小于或等于某些产品特定的阈值）或者 **touchlink information** 字段的 **link initiator** 子字段等于 **0**，则目标应（SHALL）丢弃该帧并终止目标的 touchlink 过程。
-3. 目标在 **bdbcTLInterPANTransIdLifetime** 秒后启动当前事务的计时器直到期满。随后，目标应（SHALL）生成和单播 **touchlink commissioning** 簇的 **scan response** inter-PAN 命令帧回发起者。**inter-PAN transaction identifier** 字段应（SHALL）设置为 **vIPTransID**。**RSSI correction** 字段应（SHALL）设置为产品特定的 RSSI 校正值，以便补偿无线电和产品外侧间的 RF 信号损耗。然后，发起者可以将此值与来自每个发现目标的 RSSI 结合使用，以选择合适的目标以继续进行 touchlink commissioning。如果目标希望在 touchlinking 期间被发起者优先考虑，则 **touchlink information** 字段的 **touchlink priority request** 子字段应（SHALL）被设置为 **1**（例如如果目标是功率受限并且在用户按下按钮后响应扫描）。**response identifier** 字段应（SHALL）设置为随机（非顺序）值。如果目标节点描述符的 **logical type** 字段等于 **0b001**（ZigBee 路由器）并且 **bdbNodeIsOnANetwork** 等于 **TRUE**，则 **extended PAN identifier**、**network update identifier**、**logical channel**、**PAN identifier** 和 **network address** 字段应（SHALL）设置为目标当前正在运行的网络的相应值。如果目标节点描述符的 **logical type** 字段不等于 **0b001**（ZigBee 路由器）或 **bdbNodeIsOnANetwork** 等于 **FALSE**，则 **extended PAN identifier**、**network update identifier**、**logical channel**、**PAN identifier** 和 **network address** 字段应（SHALL）设置为零。所有其他字段应（SHALL）根据目标的具体情况进行设置。
-4. 在接收到 **touchlink commissioning** 簇的 **device information request**、**identify request**、**network start request**、**network join router request**、**network join end device request** 或 **reset to factory new request** inter-PAN 命令帧（**inter-PAN transaction identifier** 字段不等于 **vIPTransID**）时，目标应（SHALL）丢弃该帧并从步骤 4 继续。如果事务计时器到期，目标应（SHALL）终止目标的 touchlink 过程。
+3. 目标在 **bdbcTLInterPANTransIdLifetime** 秒后启动当前事务的定时器直到期满。随后，目标应（SHALL）生成和单播 **touchlink commissioning** 簇的 **scan response** inter-PAN 命令帧回发起者。**inter-PAN transaction identifier** 字段应（SHALL）设置为 **vIPTransID**。**RSSI correction** 字段应（SHALL）设置为产品特定的 RSSI 校正值，以便补偿无线电和产品外侧间的 RF 信号损耗。然后，发起者可以将此值与来自每个发现目标的 RSSI 结合使用，以选择合适的目标以继续进行 touchlink commissioning。如果目标希望在 touchlinking 期间被发起者优先考虑，则 **touchlink information** 字段的 **touchlink priority request** 子字段应（SHALL）被设置为 **1**（例如如果目标是功率受限并且在用户按下按钮后响应扫描）。**response identifier** 字段应（SHALL）设置为随机（非顺序）值。如果目标节点描述符的 **logical type** 字段等于 **0b001**（ZigBee 路由器）并且 **bdbNodeIsOnANetwork** 等于 **TRUE**，则 **extended PAN identifier**、**network update identifier**、**logical channel**、**PAN identifier** 和 **network address** 字段应（SHALL）设置为目标当前正在运行的网络的相应值。如果目标节点描述符的 **logical type** 字段不等于 **0b001**（ZigBee 路由器）或 **bdbNodeIsOnANetwork** 等于 **FALSE**，则 **extended PAN identifier**、**network update identifier**、**logical channel**、**PAN identifier** 和 **network address** 字段应（SHALL）设置为零。所有其他字段应（SHALL）根据目标的具体情况进行设置。
+4. 在接收到 **touchlink commissioning** 簇的 **device information request**、**identify request**、**network start request**、**network join router request**、**network join end device request** 或 **reset to factory new request** inter-PAN 命令帧（**inter-PAN transaction identifier** 字段不等于 **vIPTransID**）时，目标应（SHALL）丢弃该帧并从步骤 4 继续。如果事务定时器到期，目标应（SHALL）终止目标的 touchlink 过程。
 5. 在接收到 **device information request** inter-PAN 命令帧之外的其他命令时，目标应（SHALL）从步骤 6 继续。随后，目标应（SHALL）生成和单播 **touchlink commissionin** 簇的 **device information response** inter-PAN 命令帧回发起者。**inter-PAN transaction identifier** 字段应（SHALL）设置为 **vIPTransID**。所有其他字段应（SHALL）根据目标的具体情况进行设置。目标应（SHALL）从步骤 4 继续。
 6. 在接收到 **identify request** inter-PAN 命令帧之外的其他命令时，目标应（SHALL）从步骤 8 继续。目标应（SHALL）根据 **identify time** 字段的值以应用特定方式（例如闪烁灯）标识自身。不应（SHALL）对 **identify request** inter-PAN 命令帧生成响应。标识操作不应（SHALL NOT）阻塞目标进一步地接收命令。目标应（SHALL）从步骤 4 继续。
 7. 在接收到 **network update request** inter-PAN 命令帧之外的其他命令时，目标应（SHALL）从步骤 7 继续。如果 **network update request** inter-PAN 命令帧的 **extended PAN identifier** 和 **PAN identifier** 字段与其存储的值不同或 **network update identifier** 字段小于或等于 **nwkUpdateId**，则目标应（SHALL）丢弃该帧并从步骤 4 继续。如果 **network update request** inter-PAN 命令帧的 **extended PAN identifier** 和 **PAN identifier** 字段与其存储的值相同并且 **network update identifier** 字段高于 **nwkUpdateId**，则目标应（SHALL）使用 **network update identifier** 和 **logical channel** 的值分别更新 **nwkUpdateId** 及其当前逻辑信道。目标应（SHALL）从步骤 4 继续。
@@ -970,3 +985,132 @@ ZigBee-PRO 提供 **Mgmt\_Leave\_req** ZDO 命令，该命令通过清除所有 
 
 然后，节点应（SHALL）清除所有 ZigBee 持久数据（除了传出 NWK 帧计数器）（参见子条款 6.9）。
 
+# 10. 安全
+
+## 10.1 安装码
+
+本节介绍了建立预配置信任中心链路密钥的带外过程、所需的安装码的格式以及用于从安装码派生预配置链路密钥的散列函数。请注意，安装码应（SHALL）是随机的，但可以不（MAY NOT）唯一。
+
+如 Figure 11 所示，在制造过程期间为每个节点创建随机安装码。此安装码以制造商特定的方式（标签等）提供给节点，并在安装期间引用。安装码的空间应该（SHOULD）与密钥空间一样具有随机性。了解一组安装码不应该（SHOULD NOT）产生任何关于其他安装码的知识，而且每个安装码的可能性应该（SHOULD）相等。
+
+![Figure 11 – Node Install Code process](./pic/f11.jpg)
+
+如 Figure 12 所示，在安装过程期间初始信任中心链路密钥是从安装码派生的，并通过带外通信通道发送到信任中心。信任中心使用此密钥作为信任中心链路密钥，该密钥随后用来配置关联节点的网络密钥。
+
+![Figure 12 – Install code use with the Trust Center](./pic/f12.jpg)
+
+### 10.1.1 安装码格式
+
+安装码由 128-bit 数字和 16-bit CRC 组成（使用 CCITT CRC 标准多项式：x\^16 + x\^12 + x\^5 + 1）。在打印或显示时，安装码表示为 4 个十六进制数字的多组。
+
+示例：安装码 “83FE D340 7A93 9723 A5C6 39B2 6916 D505 C3B5”。
+
+其中值 0x83、0xFE、0xD3、0x40、0x7A、0x93、0x97、0x23、0xA5、0xC6、0x39、0xB2、0x69、0x16、0xD5 和 0x05 用于计算 CRC16，结果返回 0xB5C3。（注意，CRC16 和安装码在上例中以小端字节顺序表示）
+
+#### 10.1.1.1 CRC 算法信息
+
+如前所述，安装码 CRC 计算基于 CRC 16-CCITT 算法并使用以下参数：
+
+* Length: 16
+* Polynomial: x\^16 + x\^12 + x\^5 + 1 (0x1021)
+* Initialization method: Direct
+* Initialization value: 0xFFFF
+* Final XOR value: 0xFFFF
+* Reflected In: True
+* Reflected Out: True
+
+CRC 16-CCITT 算法的开源实现可以在互联网上获得，如 SourceForge 等。源代码也可在 \[R5\] 中找到。
+
+### 10.1.2 散列函数
+
+AES-128 密钥使用 Matyas-Meyer-Oseas（MMO）散列函数从安装码中派生（参见 \[R1\] 的 Annex B.6 with a digest size (hashlen) equal to 128 bits）。
+
+安装码示例：
+
+应用于安装码 “83FE D340 7A93 9723 A5C6 39B2 6916 D505” 的 MMO 散列产生密钥 “66B6900981E1EE3CA4206B6B861C02BB”。
+
+注意：最低有效字节为 0x83，最高有效字节为 0x05。
+
+#### 10.1.2.1 MMO 散列代码示例
+
+基于 Rijndael 实现的 MMO 散列的开源实现可以在互联网上获得，如 SourceForge 等。源代码也可在 \[R5\] 中找到。
+
+## 10.2 节点操作
+
+节点加入网络也应（SHALL）具有策略，以指示他们预期来自网络的安全。以下是可以（MAY）用于调整其安全策略的设置。
+
+### 10.2.1 加入节点的策略值
+
+加入节点可以（MAY）具有一组策略值，例如如果要将其 commissioned 到网络中。然而，它通常根据它加入的是集中式安全网络还是分布式安全网络来设置这些策略值。除了指定为 ZigBee 协调器的节点外，所有节点都应（SHALL）支持使用任一安全模型加入网络。
+
+#### 10.2.1.1 acceptNewUnsolicitedTrustCenterLinkKey 策略
+
+此布尔值指示节点是否接受新的未经请求的 APS 传输密钥消息（包含信任中心链路密钥）。
+
+请注意，在分布式安全网络中忽略此值。
+
+#### 10.2.1.2 acceptNewUnsolicitedApplicationLinkKey 策略
+
+此布尔值指示节点是否接受信任中心或其他设备发送未经请求的新应用程序链路密钥给它。
+
+如果设备需要对伙伴节点使用 APS 加密，则可以（MAY）在分布式安全网络中使用此值。
+
+### 10.2.2 信任中心地址
+
+节点可以（MAY）在加入前知道信任中心的地址，这取决于节点的 commissioning 过程。如果节点在加入网络前已知信任中心地址，则 commissioning 过程应（SHALL）将 **apsTrustCenterAddress** 设置为它将加入的网络中的信任中心的 IEEE 地址的值。
+
+在大多数情况下，节点将加入的网络并非提前知道的。因此，建议（RECOMMENDED）节点的 commissioning 过程不要预编程信任中心地址。在这种情况下，**apsTrustCenterAddress** 最初应（SHALL）设置为 **0xffffffffffffffff**。一旦节点加入网络并接收和解密包含网络密钥的 APS 命令传输密钥命令，它应（SHALL）将 **apsTrustCenterAddress** 设置为命令中源地址的值。
+
+如果 **bdbNodeIsOnANetwork** 等于 **TRUE** 且 **apsTrustCenterAddress** 等于 **0xffffffffffffffff**，则设备已加入到分布式安全网络，并且应该（SHOULD）相应地调整节点的设置。相反，如果 **apsTrustCenterAddress** 不等于 **0xffffffffffffffff**，则该节点已加入到集中式安全网络。
+
+对于所有随后收到的信任中心或安全相关的 APS 命令帧（存在源地址字段），如果 **apsTrustCenterAddress** 不等于 **0xffffffffffffffff**，则节点应（SHALL）将 **apsTrustCenterAddress** 的值与 APS 命令的源地址值进行比较。如果值不匹配，则应（SHALL）丢弃该帧并且不再进行进一步处理。
+
+### 10.2.3 信任中心链路密钥
+
+所有节点在加入集中式安全网络后都应（SHALL）具有更新的信任中心链路密钥。这允许使用安全通信来通知加入事件以及将网络密钥分发给错过密钥更新的设备。节点应（SHALL）使用预配置密钥加入网络，然后在加入完成后请求更新链路密钥。一旦节点获得了更新的信任中心链路密钥，它就应（SHALL）忽略来自信任中心的任何未使用该密钥加密的 APS 命令。
+
+### 10.2.4 请求链路密钥
+
+如果 **bdbTCLinkKeyExchangeMethod** 等于 **0x00**，则节点应（SHALL）将其初始链路密钥与信任中心生成的密钥进行交换，以作为其在集中式安全网络中的初始加入操作的一部分。
+
+如果 **bdbTCLinkKeyExchangeMethod** 不等于 **0x00**，则节点应（SHALL）遵循此属性指定的相应过程。然而，如果该过程失败，则节点将退回到上述链路密钥交换方法（0x00）。如果此方法成功，则节点可以（MAY）将密钥视为未授权的，以允许访问受限的簇。
+
+### 10.2.5 信任中心链路密钥交换过程
+
+本节定义了检索节点的新信任中心链路密钥的过程。该过程的序列图展示了消息的交换和用于加密消息的相应密钥，如 Figure 13 所示。
+
+![Figure 13 – Trust Center link key exchange procedure sequence chart](./pic/f13.jpg)
+
+Figure 14 展示了此过程的简化版本，以供快速参考。
+
+![Figure 14 – Trust Center link key exchange procedure](./pic/f14.jpg)
+
+1. 加入节点应（SHALL）检查其 **bdbTCLinkKeyExchangeMethod**。如果 **bdbTCLinkKeyExchangeMethod** 设置为 **0**，则它应（SHALL）从步骤 2 继续。如果 **bdbTCLinkKeyExchangeMethod** 设置为另一个值，则它应（SHALL）执行该机制定义的适当步骤。如果机制成功，则节点应（SHALL）以成功状态终止信任中心链路密钥交换过程。
+2. 加入节点将 **bdbTCLinkKeyExchangeAttempts** 设置为 **0**。
+3. 加入节点应（SHALL）向信任中心发送 **Node\_Desc\_req** ZDO 命令。然后它启动 **bdbcTCLinkKeyExchangeTimeout** 秒的定时器，并将 **bdbTCLinkKeyExchangeAttempts** 递增 **1**。
+4. 如果在定时器到期之前未收到 **Node\_Desc\_rsp** ZDO 命令，则加入节点应（SHALL）确定是否重试该尝试，如下所示：
+    1. 如果 **bdbTCLinkKeyExchangeAttempts** 小于 **bdbTCLinkKeyExchangeAttemptsMax**，则加入节点应（SHALL）从步骤 3 继续。
+    2. 如果 **bdbTCLinkKeyExchangeAttempts** 等于 **bdbTCLinkKeyExchangeAttemptsMax**，则加入节点应（SHALL）以失败状态终止信任中心链路密钥交换过程。
+5. 如果接收方的节点描述符的 **server mask** 字段指示 r20 或更早的协议栈修订，则加入节点应（SHALL）以成功状态终止信任中心链路密钥交换过程。
+6. 加入节点将 **bdbTCLinkKeyExchangeAttempts** 设置为 **0**。
+7. 加入节点应（SHALL）从信任中心中请求新的链路密钥。为此，加入节点发布 **APSME-REQUEST-KEY.request** 原语（使用其初始信任中心链路密钥（key A）加密）。然后它启动 **bdbcTCLinkKeyExchangeTimeout** 秒的定时器并将 **bdbTCLinkKeyExchangeAttempts** 递增 **1**。
+8. 如果加入节点在定时器到期之前没有收到 **APSME-TRANSPORT-KEY.indication** 原语，则加入节点应（SHALL）确定是否重试该尝试，如下所示：
+    1. 如果 **bdbTCLinkKeyExchangeAttempts** 小于 **bdbTCLinkKeyExchangeAttemptsMax**，则加入节点应（SHALL）从步骤 7 继续。
+    2. 如果 **bdbTCLinkKeyExchangeAttempts** 等于 **bdbTCLinkKeyExchangeAttemptsMax**，则加入节点应（SHALL）以失败状态终止信任中心链路密钥交换过程。
+9. 加入节点应（SHALL）在 **apsDeviceKeyPairSet** 中找到与 **apsTrustCenterAddress** 相对应的 **DeviceAddress** 的条目。如果接收到的 **APSME-TRANSPORT-KEY.indication** 原语的 **KeyType** 参数不等于 **0x04**（唯一信任中心链路密钥）或原语中包含的链路密钥与 **apsDeviceKeyPairSet** 条目的 **LinkKey** 值相同，则加入节点应（SHALL）以失败状态终止信任中心链路密钥交换过程。否则，加入节点应（SHALL）用原语中包含的密钥（link key B）替换 **LinkKey** 的值，然后可以（MAY）将 **OutgoingFrameCounter** 设置为 **0**，并且它应（SHALL）为 **apsDeviceKeyPairSet** 条目将 **IncomingFrameCounter** 设置为 **0**。
+10. 加入节点将 **bdbTCLinkKeyExchangeAttempts** 设置为 **0**。
+11. 加入节点应（SHALL）与信任中心验证新链路密钥。为此，加入节点发出 **APSME-VERIFY-KEY.request** 原语以验证新密钥（link key B）。然后它启动 **bdbcTCLinkKeyExchangeTimeout** 秒的定时器并将 **bdbTCLinkKeyExchangeAttempts** 增加 **1**。
+12. 如果加入节点在定时器到期之前没有收到 **APSME-CONFIRM-KEY.indication** 原语，则加入节点应（SHALL）确定是否重试该尝试，如下所示：
+    1. 如果 **bdbTCLinkKeyExchangeAttempts** 小于 **bdbTCLinkKeyExchangeAttemptsMax**，则加入节点应（SHALL）从步骤 11 继续。
+    2. 如果 **bdbTCLinkKeyExchangeAttempts** 等于 **bdbTCLinkKeyExchangeAttemptsMax**，则加入节点应（SHALL）以失败状态终止信任中心链路密钥交换过程。
+13. 加入节点应（SHALL）以成功状态终止信任中心链路密钥交换过程。
+
+注意，加入节点应（SHALL）认为 link key A 有效，直到 link key B 成功地被信任中心验证（成功地解密响应）。
+
+### 10.2.6 接收新链路密钥
+
+节点的安全策略可以（MAY）限制信任中心发送应用程序链路密钥给它。这可能是因为节点希望控制与其共享链路密钥的其他节点，或者因为它使用某种其他机制来建立应用程序链路密钥。
+
+在某些情况下，更高级别的应用程序策略确定与应用程序链路密钥共享哪些数据，例如，通过基于证书的密钥交换协议建立更新的信任中心链路密钥的网络。
+
+如果节点收到包含信任中心链路密钥的传输密钥命令，但它未曾发送请求并且 **acceptNewUnsolicitedTrustCenterLinkKey** 设置为 **FALSE**，则它应（SHALL）忽略该消息。如果节点收到包含应用程序链路密钥的传输密钥命令，但它未层发送请求并且 **acceptNewUnsolicitedApplicationLinkKey** 设置为 **FALSE**，则它应（SHALL）忽略该消息。
