@@ -109,6 +109,12 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
         - [10.2.4 请求链路密钥](#1024-请求链路密钥)
         - [10.2.5 信任中心链路密钥交换过程](#1025-信任中心链路密钥交换过程)
         - [10.2.6 接收新链路密钥](#1026-接收新链路密钥)
+    - [10.3 信任中心行为](#103-信任中心行为)
+        - [10.3.1 添加安装码](#1031-添加安装码)
+        - [10.3.2 往网络中添加新节点](#1032-往网络中添加新节点)
+        - [10.3.3 已知节点加入时的行为](#1033-已知节点加入时的行为)
+    - [10.4 分布式安全网络行为](#104-分布式安全网络行为)
+        - [10.4.1 往网络中添加新节点](#1041-往网络中添加新节点)
 
 # 1. 引言 
 
@@ -203,7 +209,7 @@ When a bit is specified as having a value of either 0 or 1 it is specified with 
 
 集中式安全网络是由具有信任中心功能的 ZigBee 协调器形成的 ZigBee 网络。加入此类网络的每个节点都可以通过信任中心进行身份验证，然后才能在网络上操作。
 
-** Commissioning 主管（Commissioning director）：**
+**Commissioning 主管（Commissioning director）：**
 
 网络中的一个节点，能够直接编辑网络中任何节点上的绑定和报告配置。
 
@@ -1114,3 +1120,62 @@ Figure 14 展示了此过程的简化版本，以供快速参考。
 在某些情况下，更高级别的应用程序策略确定与应用程序链路密钥共享哪些数据，例如，通过基于证书的密钥交换协议建立更新的信任中心链路密钥的网络。
 
 如果节点收到包含信任中心链路密钥的传输密钥命令，但它未曾发送请求并且 **acceptNewUnsolicitedTrustCenterLinkKey** 设置为 **FALSE**，则它应（SHALL）忽略该消息。如果节点收到包含应用程序链路密钥的传输密钥命令，但它未层发送请求并且 **acceptNewUnsolicitedApplicationLinkKey** 设置为 **FALSE**，则它应（SHALL）忽略该消息。
+
+## 10.3 信任中心行为
+
+### 10.3.1 添加安装码
+
+1. 通过一些制造商特定的方式，信任中心应（SHALL）决定是否允许节点加入（参见 \[R1\] 的子条款 4.7.3）。
+    1. 如果不允许节点加入，则不执行进一步的动作。
+2. 信任中心应（SHALL）决定该加入节点是否应使用默认链路密钥或安装码链路密钥，如 **bdbJoinUsesInstallCodeKey** 所指定。
+    1. 如果信任中心需要使用安装码链路密钥，则它应（SHALL）在其 AIB **apsDeviceKeyPairSet** 中添加条目（**DeviceAddress** 设置为加入节点的 EUI64、**LinkKey** 的值等于安装码链路密钥）。
+        1. 条目的 **apsLinkKeyType** 应（SHALL）设置为 **0x00**（Unique）。参见 \[R1\] 中的 Table 4.39。
+    2. 如果信任中心不需要使用安装码链路密钥，则当节点加入网络时，它应在其 AIB **apsDeviceKeyPairSet** 中创建相应的条目。
+
+### 10.3.2 往网络中添加新节点
+
+当信任中心接受新节点加入时，可以（MAY）选择该节点是否应使用默认信任中心链路密钥或安装码密钥来加密网络密钥。它还可以（MAY）选择允许网络中设备的混合使用。这是信任中心的策略。此过程描述了信任中心如何处理节点加入（**bdbTCLinkKeyExchangeMethod** 的值等于 **0x00**（APS 请求密钥建立方法））。**bdbTCLinkKeyExchangeMethod** 的其他值尚未支持。
+
+Figure 15 展示了此过程的简化版本，以供快速参考。
+
+![Figure 15 – Trust Center link key exchange procedure](./pic/f15.jpg)
+
+1. 从 APSME 中收到 **APSME-UPDATE-DEVICE.indication** 原语后，信任中心应（SHALL）启动 **bdbTrustCenterNodeJoinTimeout** 秒的定时器。
+2. 信任中心应（SHALL）确定 **Status** 参数是否等于 **0x01**（不安全连接）。
+    1. 如果不是，信任中心应（SHALL）从步骤 12 继续。
+3. 信任中心应（SHALL）将 **bdbJoiningNodeEui64** 设置为 **APSME-UPDATE-DEVICE.indication** 原语中的 **DeviceAddress** 参数。
+4. 如果 **bdbJoinUsesInstallCodeKey** 等于 **TRUE** 且 **bdbJoiningNodeEui64** 与 **apsDeviceKeyPairSet** 中的条目不对应，则信任中心应（SHALL）从步骤 12 继续。
+5. 如果 **bdbJoinUsesInstallCodeKey** 等于 **FALSE** 且 **bdbJoiningNodeEui64** 与 **apsDeviceKeyPairSet** 中的条目不对应，则信任中心应（SHALL）在其 AIB **apsDeviceKeyPairSet** 中添加条目，**DeviceAddress** 参数设置为 **bdbJoiningNodeEui64**，并将 **LinkKey** 值设置为默认全局信任中心链路密钥（“ZigBeeAlliance09”）。
+    1. 该条目的 **apsLinkKeyType** 应（SHALL）设置为 **0x01**（Global）。参见 \[R1\] 中的 Table 4.39。
+6. 信任中心通过应（SHALL）向 APSME 发布 **APSME-TRANSPORT-KEY.request** 原语（使用与加入节点对应的 **apsDeviceKeyPairSet** 条目的 **LinkKey** 值加密），以传输网络密钥到加入节点。
+7. 如果在步骤 1 中的超时内，未从 APSME 接收到 **APSME-REQUEST-KEY.indication** 原语（具有等于 **bdbJoiningNodeEui64** 的 IEEE 地址），则信任中心应（SHALL）从步骤 10 继续。
+8. 信任中心应（SHALL）为节点生成链路密钥。此链路密钥应（SHALL）随机生成或通过制造商特定算法派生，但它不应（SHALL NOT）全部为零，并且它不应（SHALL NOT）与加入节点对应的 **apsDeviceKeyPairSet** 条目的 **LinkKey** 值相同。
+    1. 链路密钥的值应（SHALL）存储在 **bdbJoiningNodeNewTCLinkKey** 中。
+    2. 信任中心应（SHALL）向 APSME 发布 **APSME-TRANSPORT-KEY.request** 原语（使用与加入节点对应的 **apsDeviceKeyPairSet** 条目的 **LinkKey** 值加密）。
+9. 如果在步骤 1 中的超时内，信任中心收到 **APcME-VERIFY-KEY.indication**（**SrcAddress** 字段等于 **bdbJoiningNodeEui64**），则它应（SHALL）执行以下操作。
+    1. 它应（SHALL）在 **apsDeviceKeyPairSet** 中找到该条目（**DeviceAddress** 对应于 **bdbJoiningNodeEui64**）。
+    2. 如果 **bdbJoiningNodeNewTCLinkKey** 的值与 **apsDeviceKeyPairSet** 条目的 **LinkKey** 的值不同，则信任中心：
+        1. 可以（MAY）将 **OutgoingFrameCounter** 设置为 **0**，并且应（SHALL）在 **ApsDeviceKeyPairSet** 条目中将 **IncomingFrameCounter** 设置为 **0**。
+        2. 应（SHALL）将 **bdbJoiningNodeNewTCLinkKey** 的值复制到 **apsDeviceKeyPairSet的LinkKey**。
+    3. 它应（SHALL）发布 **APSME-CONFIRM-KEY.request** 原语（**DestAddress** 字段设置为 **bdbJoiningNodeEui64**）。
+    4. 它应（SHALL）从步骤 12 继续。
+10. 如果 **bdbTrustCenterRequireKeyExchange** 等于 **FALSE**（不必交换链路密钥），则信任中心应（SHALL）从步骤 12 继续。
+11. 信任中心应（SHALL）请求加入节点离开网络。为此，信任中心发布 **APSME-REMOVE-DEVICE.request** 原语（**ParentAddress** 参数设置为步骤 1 中接收到的 **APSME-UPDATE-DEVICE.indication** 原语中的 **SrcAddress** 参数、**ChildAddress** 为 **bdbJoiningNodeEui64**）。
+12. 在终止往网络中添加新节点的过程之前，信任中心应（SHALL）执行以下操作：
+    1. 使 **bdbTrustCenterNodeJoinTimeout** 定时器到期。
+    2. 将 **bdbJoiningNodeNewTCLinkKey** 的值设置为零。
+    3. 将 **bdbJoiningNodeEui64** 的值设置为零。
+
+### 10.3.3 已知节点加入时的行为
+
+如果已交换其信任中心链路密钥的节点尝试再次加入开放的信任中心，即 **APSME-UPDATE-DEVICE.indication** 原语的 **DeviceAddress** 参数对应 **apsDeviceKeyPairSet** 中的一个条目（**KeyAttributes** 字段等于 **VERIFIED\_KEY**），信任中心应（SHALL）允许节点加入但处于新状态，并在传输网络密钥时使用适合该节点的初始链路密钥。在这种情况下，信任中心应（SHALL）使用以下步骤代替 10.3.2 中给出过程的步骤 4 和 5：
+
+4. 如果 **bdbJoinUsesInstallCodeKey** 等于 **TRUE** 且未存储安装码派生的链路密钥，则信任中心应（SHALL）终止往网络中添加新节点的过程。如果 **bdbJoinUsesInstallCodeKey** 等于 **TRUE** 并且存储了安装码派生的链路密钥，则信任中心应（SHALL）首先在 **apsDeviceKeyPairSet** 中找到与加入节点对应的条目，然后使用安装码派生的链路密钥覆盖 **LinkKey** 条目，并将 **KeyAttributes** 字段设置为 **PROVISIONAL\_KEY**。然后，信任中心可以（MAY）将 **OutgoingFrameCounter** 设置为 **0**，并应（SHALL）将 **IncomingFrameCounter** 设置为 **0**。
+5. 如果 **bdbJoinUsesInstallCodeKey** 等于 **FALSE**，则信任中心应（SHALL）首先在 **apsDeviceKeyPairSet** 中找到与加入节点对应的条目，然后使用默认全局信任中心链路密钥覆盖 **LinkKey** 条目，并将 **KeyAttributes** 字段设置为 **PROVISIONAL\_KEY**。然后，信任中心可以（MAY）将 **OutgoingFrameCounter** 设置为 **0**，并应（SHALL）将 **IncomingFrameCounter** 设置为 **0**。
+
+## 10.4 分布式安全网络行为
+
+### 10.4.1 往网络中添加新节点
+
+当在分布式安全网络上运行的节点接受新节点加入时，应使用分布式安全全局链路密钥（参见 6.3.2）来加密网络密钥。
+
