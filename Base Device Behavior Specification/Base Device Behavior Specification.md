@@ -139,7 +139,7 @@ Copyright © ZigBee Alliance, Inc. (1996-2016). All rights Reserved. This inform
 
 ## 1.2 目的
 
-基础设备行为规范的目的是指定在 ZigBee-PRO 协议栈上运行的基础设备的环境，初始化，commissioning 和操作过程，以确保配置文件的互操作性。
+基础设备行为规范的目的是指定在 ZigBee-PRO 协议栈上运行的基础设备的环境、初始化、commissioning 和操作过程，以确保配置文件的互操作性。
 
 ## 1.3 一致性级别
 
@@ -633,7 +633,7 @@ Touchlink preconfigured link key (0:15) = 0xc0 0xc1 0xc2 0xc3
 * 网络转向。所有节点都应（SHALL）支持网络转向。
 * 网络形成。节点形成网络的能力及其网络安全模型应（SHALL）取决于节点的逻辑设备类型。
 * 查找和绑定。在实现简单设备类的设备上应（SHALL）支持定位和绑定到其他设备上的应用簇的能力，并且可以（MAY）在实现动态或节点设备类的设备上也支持该能力。
-* Touchlink commissioning。节点可以（MAY）支持基于邻近度的 commissioning 机制。如果支持 touchlink commissioning，则节点应（SHALL）支持作为 touchlink 发起者，目标或两者。
+* Touchlink commissioning。节点可以（MAY）支持基于邻近的 commissioning 机制。如果支持 touchlink commissioning，则节点应（SHALL）支持作为 touchlink 发起者，目标或两者。
 
 一个实现可以（MAY）随时使用 commissioning，例如，可以随时对整个节点执行网络转向，或者在适合应用程序的任何端点上随时执行查找和绑定。但是，每次使用时都应（SHALL）按照顶级 commissioning 过程中的规定执行。
 
